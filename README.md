@@ -1,6 +1,6 @@
 # 🛍️ Mini-Shop - Plateforme E-commerce Complète
 
-Une application e-commerce moderne avec une architecture microservices, offrant une interface d'administration complète et une expérience client fluide.
+Une application e-commerce moderne avec une architecture client-serveur modulaire, offrant une interface d'administration complète et une expérience client fluide.
 
 ## 📋 Table des matières
 
@@ -43,6 +43,8 @@ Une application e-commerce moderne avec une architecture microservices, offrant 
 
 ## 🏗️ Architecture
 
+Votre projet utilise une **architecture client-serveur modulaire** :
+
 ```
 mini-shop/
 ├── frontend/                 # Application React (Port 3000)
@@ -51,7 +53,7 @@ mini-shop/
 │   │   ├── pages/          # Pages de l'application
 │   │   ├── hooks/          # Hooks personnalisés
 │   │   └── services/       # Services API
-├── product-service/         # API Backend (Port 5000)
+├── product-service/         # API Backend monolithique (Port 5000)
 │   ├── controllers/        # Contrôleurs métier
 │   ├── models/            # Modèles de données
 │   ├── routes/            # Routes API
@@ -59,6 +61,12 @@ mini-shop/
 │   └── config/            # Configuration base de données
 └── create-admin.js        # Script de création d'admin
 ```
+
+### 📊 **Caractéristiques de l'architecture :**
+- **Frontend séparé** : Application React indépendante
+- **Backend monolithique modulaire** : Une seule API Express avec modules organisés
+- **Base de données centralisée** : MySQL partagée entre tous les modules
+- **Communication REST** : API RESTful entre frontend et backend
 
 ## 🛠️ Technologies utilisées
 
