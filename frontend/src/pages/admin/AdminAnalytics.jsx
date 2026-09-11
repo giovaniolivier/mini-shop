@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import useFetchAnalytics from '../hooks/useFetchAnalytics';
-import VisitsChart from '../components/VisitsChart';
-import ConversionTable from '../components/ConversionTable';
+import useFetchAnalytics from '../../hooks/useFetchAnalytics';
+import VisitsChart from '../../components/VisitsChart';
+import ConversionTable from '../../components/ConversionTable';
 
 export default function AdminAnalytics() {
   const [gaId, setGaId] = useState(localStorage.getItem('gaId') || '');

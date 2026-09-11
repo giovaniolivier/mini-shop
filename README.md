@@ -47,19 +47,29 @@ Votre projet utilise une **architecture client-serveur modulaire** :
 
 ```
 mini-shop/
+├── package.json              # Scripts racine (dev:api, dev:web, create-admin)
 ├── frontend/                 # Application React (Port 3000)
-│   ├── src/
-│   │   ├── components/      # Composants réutilisables
-│   │   ├── pages/          # Pages de l'application
-│   │   ├── hooks/          # Hooks personnalisés
-│   │   └── services/       # Services API
-├── product-service/         # API Backend monolithique (Port 5000)
-│   ├── controllers/        # Contrôleurs métier
-│   ├── models/            # Modèles de données
-│   ├── routes/            # Routes API
-│   ├── middleware/        # Middleware d'authentification
-│   └── config/            # Configuration base de données
-└── create-admin.js        # Script de création d'admin
+│   └── src/
+│       ├── layouts/          # Shell app (sidebar, header, mini-panier)
+│       ├── pages/
+│       │   ├── auth/         # Login, Register
+│       │   ├── shop/         # Catalogue, détail, checkout, profil
+│       │   ├── client/       # Espace client
+│       │   └── admin/        # Back-office
+│       ├── components/
+│       ├── hooks/            # useCart, useFetch, …
+│       ├── services/         # http + APIs par domaine
+│       ├── constants/
+│       └── utils/
+└── product-service/          # API Express (Port 5000)
+    ├── app.js
+    ├── controllers/
+    ├── models/               # + index.js (associations)
+    ├── routes/
+    ├── middleware/
+    ├── config/
+    ├── scripts/              # createAdmin, listOrders
+    └── .env.example
 ```
 
 ### 📊 **Caractéristiques de l'architecture :**
@@ -110,7 +120,8 @@ CREATE DATABASE mini_shop;
 ```
 
 ### 3. Configuration des variables d'environnement
-Créez un fichier `.env` dans le dossier `product-service/` :
+
+Backend — copiez `product-service/.env.example` vers `product-service/.env` :
 ```env
 DB_HOST=localhost
 DB_USER=root
@@ -118,6 +129,11 @@ DB_PASSWORD=votre_mot_de_passe
 DB_NAME=mini_shop
 JWT_SECRET=votre_secret_jwt
 PORT=5000
+```
+
+Frontend (optionnel) — copiez `frontend/.env.example` vers `frontend/.env` :
+```env
+REACT_APP_API_URL=http://localhost:5000/api
 ```
 
 ### 4. Installation des dépendances
@@ -140,6 +156,8 @@ npm install
 ```bash
 cd product-service
 npm start
+# ou en watch : npm run dev
+# depuis la racine : npm run start:api  /  npm run dev:api
 ```
 Le serveur API sera accessible sur `http://localhost:5000`
 
@@ -147,16 +165,21 @@ Le serveur API sera accessible sur `http://localhost:5000`
 ```bash
 cd frontend
 npm start
+# depuis la racine : npm run dev:web
 ```
 L'application sera accessible sur `http://localhost:3000`
 
 ### Création d'un compte administrateur
 ```bash
-node create-admin.js
+cd product-service
+npm run create-admin
+# depuis la racine : npm run create-admin
 ```
-Cela créera un compte admin avec les identifiants :
+Compte par défaut (modifiable via `ADMIN_EMAIL` / `ADMIN_PASSWORD` dans `.env`) :
 - Email : admin@mail.com
 - Mot de passe : admin123
+
+> L'inscription publique (`POST /api/auth/register`) force toujours le rôle `client`. Les admins se créent uniquement via ce script.
 
 ## 📖 Utilisation
 
@@ -175,70 +198,63 @@ Cela créera un compte admin avec les identifiants :
 
 ## 📁 Structure du projet
 
-### Frontend (`/frontend`)
+### Frontend (`/frontend/src`)
 ```
-src/
-├── components/           # Composants réutilisables
-│   ├── Header.jsx       # En-tête avec panier
-│   ├── Sidebar.jsx      # Navigation latérale
-│   ├── ProductCard.jsx  # Carte produit
-│   └── ...
-├── pages/               # Pages de l'application
-│   ├── Home.jsx         # Page d'accueil
-│   ├── Login.jsx        # Connexion
-│   ├── AdminProducts.jsx # Gestion produits
-│   └── ...
-├── hooks/               # Hooks personnalisés
-│   ├── useFetch.js      # Hook pour les appels API
-│   └── ...
-└── services/            # Services API
-    └── api.js           # Configuration Axios
+layouts/AppLayout.jsx
+pages/auth|shop|client|admin/
+components/
+hooks/useCart.js, useFetch.js, …
+services/http.js, authApi.js, productsApi.js, ordersApi.js, cartApi.js, mockApis.js
+constants/api.js
+utils/format.js
 ```
 
 ### Backend (`/product-service`)
 ```
-├── controllers/         # Contrôleurs métier
-│   ├── productController.js
-│   ├── orderController.js
-│   └── ...
-├── models/              # Modèles Sequelize
-│   ├── Product.js
-│   ├── Order.js
-│   ├── User.js
-│   └── OrderItem.js
-├── routes/              # Routes API
-│   ├── productRoutes.js
-│   ├── orderRoutes.js
-│   └── auth.js
-├── middleware/          # Middleware
-│   └── auth.js          # Authentification JWT
-└── config/              # Configuration
-    └── db.js            # Configuration MySQL
+app.js
+controllers/   auth, product, order, cart
+models/        + index.js (associations)
+routes/        authRoutes, productRoutes, orderRoutes, cartRoutes
+middleware/    auth, errorHandler
+config/db.js
+scripts/       createAdmin.js, listOrders.js
 ```
 
 ## 🔌 API Endpoints
 
 ### Authentification
-- `POST /api/auth/register` - Inscription
+- `POST /api/auth/register` - Inscription (rôle forcé `client`)
 - `POST /api/auth/login` - Connexion
 
 ### Produits
-- `GET /api/products` - Liste des produits
-- `GET /api/products/:id` - Détail d'un produit
-- `POST /api/products` - Créer un produit (Admin)
-- `PUT /api/products/:id` - Modifier un produit (Admin)
-- `DELETE /api/products/:id` - Supprimer un produit (Admin)
+- `GET /api/products` - Liste des produits (public)
+- `POST /api/products` - Créer (Admin + JWT)
+- `PUT /api/products/:id` - Modifier (Admin + JWT)
+- `DELETE /api/products/:id` - Supprimer (Admin + JWT)
+- `PATCH /api/products/:id/decrement` - Décrémenter stock (Admin + JWT)
 
 ### Commandes
-- `GET /api/orders` - Liste des commandes
-- `POST /api/orders` - Créer une commande
-- `PUT /api/orders/:id` - Modifier une commande
+- `GET /api/orders` - Liste (Admin + JWT)
+- `POST /api/orders` - Créer une commande (JWT)
+- `GET /api/client/orders` - Commandes du client connecté (JWT)
+- `GET /api/stats` - Stats finances (Admin + JWT)
 
-### Panier
-- `GET /api/cart` - Récupérer le panier
-- `POST /api/cart/add` - Ajouter au panier
-- `POST /api/cart/remove` - Retirer du panier
-- `PUT /api/cart/update` - Modifier quantité
+### Panier (JWT)
+- `GET /api/cart`
+- `POST /api/cart/add`
+- `POST /api/cart/remove`
+- `POST /api/cart/update`
+- `POST /api/cart/clear`
+
+## Smoke checklist
+
+Après démarrage API + frontend :
+
+1. Inscription client → login → redirection `/dashboard`
+2. Catalogue `/home` → ajout panier → mini-panier
+3. Checkout → validation commande → historique `/client/orders`
+4. `npm run create-admin` → login admin → `/admin/products` CRUD
+5. `/admin/orders` et `/admin/finances` chargent avec le token admin
 
 ## 🤝 Contribuer
 

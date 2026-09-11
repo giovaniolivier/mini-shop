@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import useFetchSettings from '../hooks/useFetchSettings';
-import TransporterTable from '../components/TransporterTable';
+import useFetchSettings from '../../hooks/useFetchSettings';
+import TransporterTable from '../../components/TransporterTable';
 
 const LANGUES = ['Français', 'English', 'Español'];
 const DEVISES = ['EUR', 'USD', 'GBP'];

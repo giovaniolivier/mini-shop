@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { getClientOrders } from '../../services/ordersApi';
 
 const badgeStyle = {
   background: 'linear-gradient(90deg, #ffd700 0%, #fffbe0 100%)',
@@ -32,10 +32,7 @@ export default function ClientDashboard() {
 
   useEffect(() => {
     setLoading(true);
-    const token = localStorage.getItem('token');
-    axios.get('http://localhost:5000/api/client/orders', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    getClientOrders()
       .then(res => {
         setOrders(res.data);
         setLoading(false);

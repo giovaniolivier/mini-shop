@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../../components/ProductCard';
 import { useNavigate } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
+import { getProducts } from '../../services/productsApi';
 
 // Catégories fictives pour la démo
 const CATEGORIES = ['Électronique', 'Livres', 'Vêtements', 'Maison', 'Sport', 'Autre'];
@@ -10,8 +10,6 @@ const CATEGORIES = ['Électronique', 'Livres', 'Vêtements', 'Maison', 'Sport', 
 function getRandomCategory() {
   return CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
 }
-
-const CLIENT_ID = 'demo'; // À remplacer par l'email ou l'id utilisateur réel si disponible
 
 const Home = ({ handleCheckout, cart, setCart, cartOpen, setCartOpen, addToCart, removeFromCart, updateCartItem, clearCart }) => {
   const [products, setProducts] = useState([]);
@@ -25,7 +23,7 @@ const Home = ({ handleCheckout, cart, setCart, cartOpen, setCartOpen, addToCart,
 
   // Charger les produits
   useEffect(() => {
-    axios.get('http://localhost:5000/api/products')
+    getProducts()
       .then(res => {
         // On simule des catégories si elles n'existent pas
         const withCat = res.data.map(p => ({ ...p, category: p.category || getRandomCategory() }));

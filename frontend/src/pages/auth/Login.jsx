@@ -1,21 +1,18 @@
 import { useState } from 'react';
-import axios from 'axios';
-import { useNavigate, Link  } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { login } from '../../services/authApi';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const res = await login(email, password);
       localStorage.setItem('token', res.data.token);
       localStorage.setItem('role', res.data.role);
-      navigate('/login', { replace: true });
-      setTimeout(() => window.location.reload(), 100);
       alert('Connexion réussie');
       if (res.data.role === 'admin') {
         navigate('/admin');
@@ -23,7 +20,7 @@ export default function Login() {
         navigate('/dashboard');
       }
     } catch (err) {
-      alert(err.response?.data?.error || 'Erreur');
+      alert(err.response?.data?.message || err.response?.data?.error || 'Erreur');
     }
   };
 

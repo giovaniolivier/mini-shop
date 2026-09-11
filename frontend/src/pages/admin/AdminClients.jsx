@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getClients, updateClient } from '../services/api';
-import ClientTable from '../components/ClientTable';
+import { getClients, updateClient } from '../../services/mockApis';
+import ClientTable from '../../components/ClientTable';
 
 const SEGMENTS = ['VIP', 'Régulier', 'Nouveau'];
 

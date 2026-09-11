@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-
-function formatDate(dateStr) {
-  return new Date(dateStr).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' });
-}
+import { getClientOrders } from '../../services/ordersApi';
+import { formatDate } from '../../utils/format';
 
 function Badge({ status }) {
   const color = status === 'Validée' ? '#43a047' : status === 'Remboursée' ? '#e53935' : '#1976d2';
@@ -48,10 +45,7 @@ export default function ClientOrders() {
 
   useEffect(() => {
     setLoading(true);
-    const token = localStorage.getItem('token');
-    axios.get('http://localhost:5000/api/client/orders', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    getClientOrders()
       .then(res => {
         setOrders(res.data);
         setLoading(false);

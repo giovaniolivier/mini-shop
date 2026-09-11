@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import useFetch from './useFetch';
-import { getSettings, updateSettings as updateSettingsApi } from '../services/api';
+import { getSettings, updateSettings as updateSettingsApi } from '../services/mockApis';
 
 export default function useFetchSettings() {
   const { data: settings, loading, error, refetch } = useFetch(getSettings, []);

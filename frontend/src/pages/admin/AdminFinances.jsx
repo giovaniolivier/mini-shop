@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { getOrders } from '../services/api';
-import FinanceTable from '../components/FinanceTable';
+import { getOrders } from '../../services/ordersApi';
+import FinanceTable from '../../components/FinanceTable';
 
 export default function AdminFinances() {
   const [orders, setOrders] = useState([]);

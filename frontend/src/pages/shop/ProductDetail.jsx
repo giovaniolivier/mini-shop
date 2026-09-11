@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../../components/ProductCard';
+import { getProducts } from '../../services/productsApi';
 
 export default function ProductDetail({ onAddToCart, openCart }) {
   const { id } = useParams();
@@ -9,7 +9,7 @@ export default function ProductDetail({ onAddToCart, openCart }) {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/products`)
+    getProducts()
       .then(res => {
         const found = res.data.find(p => p.id === parseInt(id));
         setProduct(found);

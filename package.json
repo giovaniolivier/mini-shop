@@ -1,0 +1,12 @@
+{
+  "name": "mini-shop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mini-Shop e-commerce monorepo",
+  "scripts": {
+    "dev:api": "npm --prefix product-service run dev",
+    "dev:web": "npm --prefix frontend start",
+    "start:api": "npm --prefix product-service start",
+    "create-admin": "npm --prefix product-service run create-admin"
+  }
+}

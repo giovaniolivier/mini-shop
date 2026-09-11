@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getOrders, updateOrder } from '../services/api';
-import OrderTable from '../components/OrderTable';
+import { getOrders } from '../../services/ordersApi';
+import { updateOrder } from '../../services/mockApis';
+import OrderTable from '../../components/OrderTable';
 
 const STATUS = ['À valider', 'Préparation', 'Expédiée', 'Livrée', 'Retournée', 'Remboursée'];
 

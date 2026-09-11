@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
-import { getProducts, createProduct, updateProduct, deleteProduct } from '../services/api';
-import ProductTable from '../components/ProductTable';
-import ProductForm from '../components/ProductForm';
-import ProductChart from '../components/ProductChart';
+import { getProducts, createProduct, updateProduct, deleteProduct } from '../../services/productsApi';
+import ProductTable from '../../components/ProductTable';
+import ProductForm from '../../components/ProductForm';
+import ProductChart from '../../components/ProductChart';
 
 const CATEGORIES = ['Électronique', 'Livres', 'Vêtements', 'Maison', 'Sport', 'Autre'];
 

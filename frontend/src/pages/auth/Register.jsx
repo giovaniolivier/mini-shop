@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { register } from '../../services/authApi';
 
 export default function Register() {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
@@ -8,10 +8,10 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/auth/register', formData);
+      await register(formData);
       alert('Inscription réussie, connectez-vous !');
     } catch (err) {
-      alert(err.response?.data?.error || 'Erreur');
+      alert(err.response?.data?.message || err.response?.data?.error || 'Erreur');
     }
   };
 

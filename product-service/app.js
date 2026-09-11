@@ -1,13 +1,15 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const sequelize = require('./config/db');
-const Product = require('./models/Product');
-const productRoutes = require('./routes/productRoutes');
-const authRoutes = require('./routes/auth');
-const orderRoutes = require('./routes/orderRoutes');
+require('./models');
 
-dotenv.config();
+const productRoutes = require('./routes/productRoutes');
+const authRoutes = require('./routes/authRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
 app.use(cors());
@@ -16,15 +18,17 @@ app.use(express.json());
 app.use('/api', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api', orderRoutes);
+app.use('/api', cartRoutes);
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-// Préparation pour l'import du middleware d'authentification et de rôle
-// const { authenticateJWT, isAdmin } = require('./middleware/auth');
-
-sequelize.sync({ alter: true }) // alter: true = adapte la BDD sans tout supprimer
+sequelize
+  .sync({ alter: true })
   .then(() => {
-    console.log('✅ Connexion à MySQL réussie');
-    app.listen(PORT, () => console.log(`✅ API démarrée sur le port ${PORT}`));
+    console.log('Connexion à MySQL réussie');
+    app.listen(PORT, () => console.log(`API démarrée sur le port ${PORT}`));
   })
-  .catch(err => console.error('❌ Erreur de connexion à MySQL:', err));
+  .catch((err) => console.error('Erreur de connexion à MySQL:', err));
