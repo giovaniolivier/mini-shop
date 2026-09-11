@@ -7,7 +7,9 @@ import ProductDetail from './pages/shop/ProductDetail';
 import Checkout from './pages/shop/Checkout';
 import Profile from './pages/shop/Profile';
 import AdminProducts from './pages/admin/AdminProducts';
+import AdminProductNew from './pages/admin/AdminProductNew';
 import AdminOrders from './pages/admin/AdminOrders';
+import AdminOrderNew from './pages/admin/AdminOrderNew';
 import AdminClients from './pages/admin/AdminClients';
 import AdminMarketing from './pages/admin/AdminMarketing';
 import AdminFinances from './pages/admin/AdminFinances';
@@ -92,10 +94,26 @@ function AppRoutes({
           }
         />
         <Route
+          path="/admin/products/new"
+          element={
+            <PrivateRoute role="admin">
+              <AdminProductNew />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/admin/orders"
           element={
             <PrivateRoute role="admin">
               <AdminOrders />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/orders/new"
+          element={
+            <PrivateRoute role="admin">
+              <AdminOrderNew />
             </PrivateRoute>
           }
         />

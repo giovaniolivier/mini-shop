@@ -1,56 +1,88 @@
-import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import {
   MdDashboard,
-  MdShoppingCart,
+  MdInventory2,
   MdPeople,
   MdListAlt,
   MdBarChart,
-  MdStore,
-  MdCampaign,
-  MdSettings,
+  MdStorefront,
+  MdAccountBalance,
+  MdLogout,
 } from 'react-icons/md';
 import BrandLogo from './BrandLogo';
 
-const items = [
-  { to: '/admin', label: 'Dashboard', icon: <MdDashboard size={20} /> },
-  { to: '/admin/products', label: 'Produits', icon: <MdShoppingCart size={20} /> },
-  { to: '/admin/clients', label: 'Clients', icon: <MdPeople size={20} /> },
+const navItems = [
+  { to: '/admin', label: 'Aperçu', icon: <MdDashboard size={20} />, end: true },
+  { to: '/admin/products', label: 'Catalogue & Stocks', icon: <MdInventory2 size={20} /> },
   { to: '/admin/orders', label: 'Commandes', icon: <MdListAlt size={20} /> },
-  { to: '/admin/analytics', label: 'Analytics', icon: <MdBarChart size={20} /> },
-  { to: '/admin/finances', label: 'Finances', icon: <MdStore size={20} /> },
-  { to: '/admin/marketing', label: 'Marketing', icon: <MdCampaign size={20} /> },
-  { to: '/admin/settings', label: 'Paramètres', icon: <MdSettings size={20} /> },
+  { to: '/admin/clients', label: 'CRM Clients', icon: <MdPeople size={20} /> },
+  { to: '/admin/finances', label: 'Marketing & Finances', icon: <MdAccountBalance size={20} /> },
+  { to: '/admin/analytics', label: 'Performances', icon: <MdBarChart size={20} /> },
 ];
 
 export default function AdminSidebar() {
   const navigate = useNavigate();
+  const profile = useMemo(() => {
+    try {
+      const raw = localStorage.getItem('user');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const email = profile?.email || 'admin@mail.com';
+  const displayName =
+    [profile?.firstName, profile?.lastName].filter(Boolean).join(' ') ||
+    profile?.username ||
+    'Studio Direction';
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('role');
+    localStorage.removeItem('user');
     navigate('/login', { replace: true });
   };
 
   return (
-    <aside className="ae-sidebar">
-      <div className="ae-sidebar-brand">
+    <aside className="ae-sidebar ae-sidebar--console">
+      <div className="ae-sidebar-brand ae-console-brand">
         <BrandLogo variant="sidebar" />
-        <span>Admin</span>
       </div>
-      <div className="ae-sidebar-section">Gestion</div>
-      {items.map((item) => (
+
+      <div className="ae-sidebar-section">Pilotage</div>
+      {navItems.map((item) => (
         <NavLink
           key={item.to}
           to={item.to}
-          end={item.to === '/admin'}
+          end={item.end}
           className={({ isActive }) => `ae-nav-link${isActive ? ' active' : ''}`}
         >
           {item.icon}
           <span className="label">{item.label}</span>
         </NavLink>
       ))}
+
       <div style={{ flex: 1 }} />
-      <button className="btn btn-outline" onClick={handleLogout} style={{ margin: '0.5rem 0.35rem 1rem' }}>
+
+      <Link to="/home" className="ae-nav-link ae-nav-link--shop">
+        <MdStorefront size={20} />
+        <span className="label">Retour boutique</span>
+      </Link>
+
+      <div className="ae-console-profile">
+        <div className="ae-console-avatar" aria-hidden>
+          {(displayName || 'S').charAt(0).toUpperCase()}
+        </div>
+        <div className="ae-console-user">
+          <strong>{displayName}</strong>
+          <span>{email}</span>
+        </div>
+      </div>
+
+      <button type="button" className="btn btn-outline ae-console-logout" onClick={handleLogout}>
+        <MdLogout size={16} />
         <span>Déconnexion</span>
       </button>
     </aside>

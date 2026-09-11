@@ -102,7 +102,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
   font-size: 0.58rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -221,6 +222,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.75rem;
   margin: 0.1rem 0 1rem;
   font-size: 0.78rem;
@@ -711,13 +713,37 @@
   border-color: #b88e5f;
 }
 
+@media (max-width: 700px) {
+  .ae-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ae-register-card {
+    max-width: 440px;
+  }
+
+  .ae-register-sso {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 520px) {
-  .ae-login-inner {
-    padding: 1.4rem 1.1rem 0;
+  .ae-login-screen {
+    padding: 1rem 0.75rem;
+    align-items: flex-start;
+  }
+
+  .ae-login-inner,
+  .ae-register-inner {
+    padding: 1.25rem 1rem 0;
+  }
+
+  .ae-register-inner {
+    padding-bottom: 1.1rem;
   }
 
   .ae-login-cta {
-    padding: 1rem 1.1rem 1.1rem;
+    padding: 1rem 1rem 1.1rem;
   }
 
   .ae-trust-row,
@@ -725,17 +751,48 @@
     grid-template-columns: 1fr;
   }
 
-  .ae-form-grid {
-    grid-template-columns: 1fr;
+  .ae-login-submit {
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+    padding: 0.85rem 0.75rem;
+  }
+
+  .ae-role-tabs {
+    font-size: 0.75rem;
+  }
+
+  .ae-role-tab {
+    padding: 0.6rem 0.25rem;
+    font-size: 0.72rem;
   }
 
   .ae-register-footer {
     flex-direction: column;
     text-align: center;
+    padding: 0.85rem 1rem;
+  }
+
+  .ae-register-footer a {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
   }
 
   .ae-armor-head {
     flex-direction: column;
     gap: 0.25rem;
+  }
+
+  .ae-brand-logo--auth {
+    height: 44px;
+    max-width: 220px;
+  }
+
+  .ae-success-modal {
+    padding: 1.6rem 1.2rem 1.35rem;
+  }
+
+  .ae-success-modal::before {
+    margin: -1.6rem -1.2rem 1.2rem;
   }
 }

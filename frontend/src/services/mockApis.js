@@ -1,12 +1,11 @@
 /**
  * APIs mock / non branchées au backend.
- * Les pages admin clients, settings, analytics et mutations de commandes
- * s'appuient encore sur du localStorage ou des stubs — pas d'endpoints réels.
+ * Settings & analytics restent des stubs.
+ * Clients : préférer `services/clientsApi.js` (GET/PUT /clients).
  */
 import http from './http';
 
-export const getClients = () => http.get('/clients');
-export const updateClient = (id, data) => http.put(`/clients/${id}`, data);
+export { getClients, updateClient } from './clientsApi';
 export const deleteClient = (id) => http.delete(`/clients/${id}`);
 
 export const getSettings = () => http.get('/settings');
