@@ -229,6 +229,12 @@ textarea {
   line-height: 1.2;
 }
 
+.ae-sidebar-brand .ae-brand-logo--sidebar {
+  height: 36px;
+  width: auto;
+  max-width: 100%;
+}
+
 .ae-sidebar-brand span {
   display: block;
   font-size: 0.7rem;
@@ -236,7 +242,7 @@ textarea {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-secondary);
-  margin-top: 0.2rem;
+  margin-top: 0.35rem;
 }
 
 .ae-sidebar-section {
@@ -289,6 +295,14 @@ textarea {
   font-weight: 700;
   font-size: 1.1rem;
   letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+}
+
+.ae-header-brand .ae-brand-logo--header {
+  height: 34px;
+  width: auto;
+  max-width: 200px;
 }
 
 .ae-header-brand em {
@@ -512,11 +526,17 @@ textarea {
     padding: 1rem 0.5rem;
   }
 
-  .ae-sidebar-brand,
+  .ae-sidebar-brand span,
   .ae-sidebar-section,
   .ae-nav-link span.label,
   .ae-sidebar .btn span {
     display: none;
+  }
+
+  .ae-sidebar-brand .ae-brand-logo--sidebar {
+    height: 28px;
+    max-width: 40px;
+    object-position: left center;
   }
 
   .ae-nav-link {

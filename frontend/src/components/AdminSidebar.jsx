@@ -10,6 +10,7 @@ import {
   MdCampaign,
   MdSettings,
 } from 'react-icons/md';
+import BrandLogo from './BrandLogo';
 
 const items = [
   { to: '/admin', label: 'Dashboard', icon: <MdDashboard size={20} /> },
@@ -33,7 +34,7 @@ export default function AdminSidebar() {
   return (
     <aside className="ae-sidebar">
       <div className="ae-sidebar-brand">
-        Atelier Épure
+        <BrandLogo variant="sidebar" />
         <span>Admin</span>
       </div>
       <div className="ae-sidebar-section">Gestion</div>

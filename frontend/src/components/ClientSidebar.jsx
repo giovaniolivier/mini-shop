@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { MdHome, MdPerson, MdShoppingCart, MdListAlt } from 'react-icons/md';
+import BrandLogo from './BrandLogo';
 
 const items = [
   { to: '/dashboard', label: 'Accueil', icon: <MdHome size={20} /> },
@@ -20,7 +21,7 @@ export default function ClientSidebar() {
   return (
     <aside className="ae-sidebar">
       <div className="ae-sidebar-brand">
-        Atelier Épure
+        <BrandLogo variant="sidebar" />
         <span>Espace client</span>
       </div>
       <div className="ae-sidebar-section">Navigation</div>

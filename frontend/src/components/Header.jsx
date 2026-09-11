@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaShoppingCart } from 'react-icons/fa';
+import BrandLogo from './BrandLogo';
 
 export default function Header({ onCartClick, cartCount }) {
   const role = localStorage.getItem('role');
@@ -8,7 +9,7 @@ export default function Header({ onCartClick, cartCount }) {
   return (
     <header className="ae-header">
       <div className="ae-header-brand">
-        Atelier <em>Épure</em>
+        <BrandLogo variant="header" />
       </div>
       <div style={{ flex: 1 }} />
       {showCart && (
