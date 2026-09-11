@@ -62,63 +62,64 @@ export default function AdminFinances() {
     URL.revokeObjectURL(url);
   };
 
-  // Styles
-  const card = { background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ececec', padding: 24, margin: 8, minWidth: 180, textAlign: 'center', fontWeight: 700 };
-  const section = { background: '#fff', borderRadius: 12, boxShadow: '0 2px 12px #ececec', padding: 24, margin: '24px 0' };
-  const btn = { background: 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)', color: '#fff', border: 'none', borderRadius: 24, padding: '6px 18px', fontSize: 15, fontWeight: 700, cursor: 'pointer', margin: '0 8px' };
-  const input = { border: '1px solid #bbb', borderRadius: 8, padding: '6px 12px', fontSize: 16, outline: 'none', margin: '0 8px 8px 0' };
-
   // Top produits
   const produits = {};
-  filtered.forEach(o => o.items.forEach(i => {
-    const name = i.Product?.name || 'Produit';
-    produits[name] = (produits[name] || 0) + i.quantity;
-  }));
-  const topProduits = Object.entries(produits).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  filtered.forEach((o) =>
+    o.items.forEach((i) => {
+      const name = i.Product?.name || 'Produit';
+      produits[name] = (produits[name] || 0) + i.quantity;
+    })
+  );
+  const topProduits = Object.entries(produits)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
 
   return (
-    <div style={{ padding: '2rem', maxWidth: 1100, margin: '0 auto', background: 'linear-gradient(120deg, #f8fafc 0%, #e3f2fd 100%)', minHeight: '100vh' }}>
-      <h1 style={{ fontSize: 32, fontWeight: 800, color: '#1976d2', marginBottom: 32 }}>Finances & Reporting</h1>
-      {/* Indicateurs clés */}
-      <section style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginBottom: 32 }}>
-        <div style={card}>Chiffre d'affaires<br /><span style={{ fontSize: 28, color: '#2e7d32' }}>{totalCA.toFixed(2)} €</span></div>
-        <div style={card}>Ventes<br /><span style={{ fontSize: 28, color: '#1976d2' }}>{totalVentes}</span></div>
-        <div style={card}>Panier moyen<br /><span style={{ fontSize: 28, color: '#f9a825' }}>{panierMoyen} €</span></div>
-        <div style={card}>Remboursements<br /><span style={{ fontSize: 28, color: '#e53935' }}>{remboursements}</span></div>
-        <div style={card}>Taxes (20%)<br /><span style={{ fontSize: 22 }}>{taxes.toFixed(2)} €</span></div>
-        <div style={card}>Frais livraison<br /><span style={{ fontSize: 22 }}>{fraisLivraison.toFixed(2)} €</span></div>
+    <div className="ae-page" style={{ maxWidth: 1100, margin: '0 auto' }}>
+      <h1 className="ae-page-title">Finances</h1>
+      <p className="ae-page-sub">Reporting Atelier Épure</p>
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 12, marginBottom: '1.5rem' }}>
+        <div className="surface" style={{ padding: '1rem', textAlign: 'center' }}>
+          <div style={{ fontSize: 13, color: 'var(--color-muted)' }}>CA</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-secondary)' }}>{totalCA.toFixed(2)} €</div>
+        </div>
+        <div className="surface" style={{ padding: '1rem', textAlign: 'center' }}>
+          <div style={{ fontSize: 13, color: 'var(--color-muted)' }}>Ventes</div>
+          <div style={{ fontSize: 22, fontWeight: 700 }}>{totalVentes}</div>
+        </div>
+        <div className="surface" style={{ padding: '1rem', textAlign: 'center' }}>
+          <div style={{ fontSize: 13, color: 'var(--color-muted)' }}>Panier moyen</div>
+          <div style={{ fontSize: 22, fontWeight: 700 }}>{panierMoyen} €</div>
+        </div>
+        <div className="surface" style={{ padding: '1rem', textAlign: 'center' }}>
+          <div style={{ fontSize: 13, color: 'var(--color-muted)' }}>Remboursements</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-danger)' }}>{remboursements}</div>
+        </div>
+        <div className="surface" style={{ padding: '1rem', textAlign: 'center' }}>
+          <div style={{ fontSize: 13, color: 'var(--color-muted)' }}>Taxes</div>
+          <div style={{ fontSize: 18, fontWeight: 700 }}>{taxes.toFixed(2)} €</div>
+        </div>
+        <div className="surface" style={{ padding: '1rem', textAlign: 'center' }}>
+          <div style={{ fontSize: 13, color: 'var(--color-muted)' }}>Livraison</div>
+          <div style={{ fontSize: 18, fontWeight: 700 }}>{fraisLivraison.toFixed(2)} €</div>
+        </div>
       </section>
-      {/* Tableau des ventes */}
       <FinanceTable
         orders={filtered}
         loading={loading}
         error={error}
-        input={input}
-        btn={btn}
         filter={filter}
         setFilter={setFilter}
         onExport={exportCSV}
       />
-      {/* Analyse des performances */}
-      <section style={section}>
-        <h2 style={{ fontSize: 22, color: '#1976d2' }}>Top produits</h2>
-        <ul>
+      <section className="surface" style={{ padding: '1.35rem', marginTop: '1.25rem' }}>
+        <h2 style={{ margin: '0 0 0.75rem', fontSize: '1.1rem' }}>Top produits</h2>
+        <ul style={{ margin: 0, paddingLeft: 18 }}>
           {topProduits.map(([name, qty]) => (
-            <li key={name} style={{ fontSize: 17 }}>{name} : {qty} ventes</li>
+            <li key={name}>{name} : {qty} ventes</li>
           ))}
-          {topProduits.length === 0 && <li style={{ color: '#888' }}>Aucun produit vendu</li>}
+          {topProduits.length === 0 && <li style={{ color: 'var(--color-muted)' }}>Aucun produit vendu</li>}
         </ul>
-      </section>
-      {/* Graphique simulé */}
-      <section style={section}>
-        <h2 style={{ fontSize: 22, color: '#1976d2' }}>Évolution des ventes (simulation)</h2>
-        <div style={{ height: 180, background: 'linear-gradient(90deg, #1976d2 10%, #64b5f6 90%)', borderRadius: 12, margin: '24px 0', display: 'flex', alignItems: 'flex-end', gap: 8, padding: 16 }}>
-          {/* Barres simulées */}
-          {[...Array(12)].map((_, i) => (
-            <div key={i} style={{ width: 20, height: Math.random() * 140 + 20, background: '#fff', borderRadius: 6 }} />
-          ))}
-        </div>
-        <div style={{ color: '#888', fontSize: 15 }}>Graphique de démonstration (remplacer par une vraie lib chart.js ou recharts pour production)</div>
       </section>
     </div>
   );

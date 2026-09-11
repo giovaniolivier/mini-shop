@@ -1,39 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getClientOrders } from '../../services/ordersApi';
-
-const badgeStyle = {
-  background: 'linear-gradient(90deg, #ffd700 0%, #fffbe0 100%)',
-  color: '#bfa100',
-  borderRadius: 12,
-  padding: '4px 16px',
-  fontWeight: 700,
-  fontSize: 15,
-  marginLeft: 16,
-  boxShadow: '0 2px 8px #f5e9a0',
-  display: 'inline-block',
-};
-
-const avatarStyle = {
-  width: 64,
-  height: 64,
-  borderRadius: '50%',
-  objectFit: 'cover',
-  boxShadow: '0 2px 8px #e0e0e0',
-  marginRight: 24,
-  background: '#e3f2fd',
-  border: '2px solid #1976d2',
-};
+import { formatDate } from '../../utils/format';
 
 export default function ClientDashboard() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [user] = useState(() => JSON.parse(localStorage.getItem('user') || '{"name":"Utilisateur","email":"demo@mail.com"}'));
+  const [user] = useState(() =>
+    JSON.parse(localStorage.getItem('user') || '{"name":"Client","email":"demo@mail.com"}')
+  );
 
   useEffect(() => {
     setLoading(true);
     getClientOrders()
-      .then(res => {
+      .then((res) => {
         setOrders(res.data);
         setLoading(false);
       })
@@ -43,65 +24,90 @@ export default function ClientDashboard() {
       });
   }, []);
 
-  // Avatar par défaut (initiale du prénom)
-  const avatarUrl = user.avatarUrl || null;
-  const initial = (user.name || user.username || 'U').charAt(0).toUpperCase();
-  const badge = 'Client Or'; // Statut simulé
-  const prenom = (user.name || user.username || '').split(' ')[0] || 'Client';
+  const prenom = (user.name || user.username || 'Client').split(' ')[0];
+  const initial = prenom.charAt(0).toUpperCase();
 
   return (
-    <div style={{ background: 'linear-gradient(120deg, #f8fafc 0%, #e3f2fd 100%)', minHeight: '100vh', padding: '2rem 0 0 0', borderRadius: 10, fontFamily: 'Inter, Roboto, Arial, sans-serif' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '0 20px' }}>
-        {/* En-tête moderne */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 36, flexWrap: 'wrap' }}>
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="avatar" style={avatarStyle} />
-          ) : (
-            <div style={{ ...avatarStyle, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, fontWeight: 800, color: '#1976d2' }}>{initial}</div>
-          )}
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 28, fontWeight: 900, color: '#1976d2', letterSpacing: 1, marginBottom: 4 }}>Bonjour, {prenom} !</div>
-            <div style={{ fontSize: 17, color: '#888', fontWeight: 500 }}>Bienvenue sur votre espace client MiniShop</div>
-          </div>
-          <span style={badgeStyle}>{badge}</span>
+    <div className="ae-page" style={{ maxWidth: 900, margin: '0 auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: '1.75rem' }}>
+        <div
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: 14,
+            background: 'var(--color-primary)',
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontWeight: 700,
+            fontSize: 22,
+          }}
+        >
+          {initial}
         </div>
-        {/* Bloc infos */}
-        <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, marginBottom: 32 }}>
-          <h3 style={{ color: '#1976d2', fontWeight: 800, fontSize: 22, marginBottom: 18 }}>Mes informations</h3>
-          <div style={{ fontSize: 17, color: '#444', marginBottom: 8 }}><b>Nom :</b> {user.name || user.username}</div>
-          <div style={{ fontSize: 17, color: '#444', marginBottom: 8 }}><b>Email :</b> {user.email}</div>
+        <div>
+          <h1 className="ae-page-title" style={{ marginBottom: 4 }}>
+            Bonjour, {prenom}
+          </h1>
+          <p className="ae-page-sub" style={{ margin: 0 }}>
+            Votre espace Atelier Épure
+          </p>
         </div>
-        {/* Bloc commandes (inchangé) */}
-        <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32 }}>
-          <h3 style={{ color: '#1976d2', fontWeight: 800, fontSize: 22, marginBottom: 18 }}>Mes commandes</h3>
-          {loading ? (
-            <div>Chargement...</div>
-          ) : error ? (
-            <div style={{ color: '#e53935' }}>{error}</div>
-          ) : orders.length === 0 ? (
-            <div style={{ color: '#888', fontSize: 16 }}>Aucune commande pour l'instant.</div>
-          ) : (
-            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, background: '#fff', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 12px #ececec' }}>
+        <span className="ae-badge" style={{ marginLeft: 'auto' }}>
+          Client
+        </span>
+      </div>
+
+      <section className="surface" style={{ padding: '1.35rem', marginBottom: '1.25rem' }}>
+        <h2 style={{ margin: '0 0 0.75rem', fontSize: '1.05rem' }}>Informations</h2>
+        <p style={{ margin: '0 0 4px' }}>
+          <b>Nom :</b> {user.name || user.username}
+        </p>
+        <p style={{ margin: 0 }}>
+          <b>Email :</b> {user.email}
+        </p>
+        <div style={{ marginTop: 14, display: 'flex', gap: 8 }}>
+          <Link to="/home" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+            Voir la boutique
+          </Link>
+          <Link to="/client/orders" className="btn btn-outline" style={{ textDecoration: 'none' }}>
+            Mes commandes
+          </Link>
+        </div>
+      </section>
+
+      <section className="surface" style={{ padding: '1.35rem' }}>
+        <h2 style={{ margin: '0 0 1rem', fontSize: '1.05rem' }}>Dernières commandes</h2>
+        {loading ? (
+          <p style={{ color: 'var(--color-muted)' }}>Chargement…</p>
+        ) : error ? (
+          <p style={{ color: 'var(--color-danger)' }}>{error}</p>
+        ) : orders.length === 0 ? (
+          <p style={{ color: 'var(--color-muted)' }}>Aucune commande pour l&apos;instant.</p>
+        ) : (
+          <div className="ae-table-wrap">
+            <table className="ae-table">
               <thead>
                 <tr>
-                  <th style={{ background: '#f4f7fa', padding: 14, fontWeight: 800, color: '#1976d2', fontSize: 17, textAlign: 'left' }}>Date</th>
-                  <th style={{ background: '#f4f7fa', padding: 14, fontWeight: 800, color: '#1976d2', fontSize: 17, textAlign: 'left' }}>Produits</th>
-                  <th style={{ background: '#f4f7fa', padding: 14, fontWeight: 800, color: '#1976d2', fontSize: 17, textAlign: 'left' }}>Total</th>
+                  <th>Date</th>
+                  <th>Produits</th>
+                  <th>Total</th>
                 </tr>
               </thead>
               <tbody>
-                {orders.map((order, idx) => (
-                  <tr key={order.id || idx} style={idx % 2 === 1 ? { background: '#f8fafc' } : {}}>
-                    <td style={{ padding: 13, fontSize: 16, color: '#222', background: '#fff', borderBottom: '1px solid #f0f0f0' }}>{order.date}</td>
-                    <td style={{ padding: 13, fontSize: 16, color: '#222', background: '#fff', borderBottom: '1px solid #f0f0f0' }}>{order.items.map(i => `${i.Product?.name || i.name} x${i.quantity}`).join(' | ')}</td>
-                    <td style={{ padding: 13, fontSize: 16, color: '#222', background: '#fff', borderBottom: '1px solid #f0f0f0' }}>{order.items.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2)} €</td>
+                {orders.slice(0, 5).map((order) => (
+                  <tr key={order.id}>
+                    <td>{formatDate(order.date)}</td>
+                    <td>{order.items.map((i) => `${i.Product?.name || i.name} ×${i.quantity}`).join(' · ')}</td>
+                    <td>{order.items.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2)} €</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
+      </section>
     </div>
   );
-} 
+}

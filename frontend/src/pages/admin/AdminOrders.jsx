@@ -76,13 +76,10 @@ export default function AdminOrders() {
     win.close();
   };
 
-  // Styles
-  const btn = { background: 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)', color: '#fff', border: 'none', borderRadius: 16, padding: '8px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', margin: '0 8px', boxShadow: '0 2px 8px #e0e0e0', transition: 'background 0.2s' };
-  const btnSec = { ...btn, background: '#eee', color: '#222' };
-
   return (
-    <div style={{ padding: '2.5rem 0', maxWidth: 1200, margin: '0 auto', background: 'linear-gradient(120deg, #f8fafc 0%, #e3f2fd 100%)', minHeight: '100vh', fontFamily: 'Inter, Roboto, Arial, sans-serif' }}>
-      <h1 style={{ fontSize: 36, fontWeight: 900, color: '#1976d2', marginBottom: 36, letterSpacing: 1, textAlign: 'center' }}>Gestion des commandes</h1>
+    <div className="ae-page" style={{ maxWidth: 1100, margin: '0 auto' }}>
+      <h1 className="ae-page-title">Commandes</h1>
+      <p className="ae-page-sub">Suivi des commandes Atelier Épure</p>
       <OrderTable
         orders={orders}
         onChangeStatus={changeStatus}
@@ -90,8 +87,6 @@ export default function AdminOrders() {
         onPrint={printOrder}
         loading={loading}
         error={error}
-        btn={btn}
-        btnSec={btnSec}
       />
     </div>
   );

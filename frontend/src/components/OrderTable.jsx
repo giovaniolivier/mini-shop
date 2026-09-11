@@ -1,57 +1,79 @@
 import React from 'react';
 
-export default function OrderTable({ orders, onChangeStatus, onRefund, onPrint, loading, error, btn, btnSec }) {
+export default function OrderTable({ orders, onChangeStatus, onRefund, onPrint, loading, error }) {
   return (
-    <section style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' }}>
-      <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Commandes</h2>
-      {error && <div style={{ color: '#e53935', marginBottom: 12 }}>{error}</div>}
+    <section className="surface" style={{ padding: '1.35rem', margin: '1.25rem 0' }}>
+      <h2 style={{ margin: '0 0 1rem', fontSize: '1.1rem' }}>Commandes</h2>
+      {error && <div style={{ color: 'var(--color-danger)', marginBottom: 12 }}>{error}</div>}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: 32 }}>
-          <span style={{ fontSize: 22, color: '#1976d2' }}>Chargement des commandes...</span>
-        </div>
+        <p style={{ color: 'var(--color-muted)' }}>Chargement des commandes…</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, background: '#fff', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 12px #ececec' }}>
+        <div className="ae-table-wrap">
+          <table className="ae-table">
             <thead>
-              <tr style={{ background: '#e3f2fd' }}>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Date</th>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Produits</th>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Statut</th>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Historique</th>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Actions</th>
+              <tr>
+                <th>Date</th>
+                <th>Produits</th>
+                <th>Statut</th>
+                <th>Historique</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {orders && orders.map((order, idx) => (
-                <tr key={order.id} style={idx % 2 === 1 ? { background: '#f8fafc' } : {}}>
-                  <td style={{ padding: 10 }}>{order.date}</td>
+              {orders?.map((order) => (
+                <tr key={order.id}>
+                  <td>{order.date}</td>
                   <td>
-                    <ul style={{ margin: 0, padding: 20, listStyle: 'none' }}>
-                      {order.items.map((item, idx2) => (
-                        <li key={item.id + '-' + idx2}>{item.name} - {item.price} € x {item.quantity}</li>
-                      ))}
-                    </ul>
-                  </td>
-                  <td style={{ fontWeight: 700, color: order.status === 'Remboursée' ? '#e53935' : order.status === 'Livrée' ? '#388e3c' : '#1976d2' }}>{order.status}</td>
-                  <td>
-                    <ul style={{ fontSize: 13, color: '#888', margin: 0, padding: 0, listStyle: 'none' }}>
-                      {order.history && order.history.map((h, i) => (
-                        <li key={i}>{h.status} - {h.date}</li>
+                    <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                      {(order.items || []).map((item, idx2) => (
+                        <li key={(item.id || idx2) + '-' + idx2}>
+                          {item.name || item.Product?.name} — {item.price} € × {item.quantity}
+                        </li>
                       ))}
                     </ul>
                   </td>
                   <td>
-                    {order.status !== 'Remboursée' && <button style={btn} onClick={() => onChangeStatus(order.id)}>Changer statut</button>}
-                    {order.status === 'Livrée' && !order.refunded && <button style={btnSec} onClick={() => onRefund(order.id)}>Retour/remboursement</button>}
-                    <button style={btnSec} onClick={() => onPrint(order)}>Imprimer</button>
+                    <span className="ae-badge">{order.status}</span>
+                  </td>
+                  <td>
+                    <ul style={{ fontSize: 13, color: 'var(--color-muted)', margin: 0, padding: 0, listStyle: 'none' }}>
+                      {order.history?.map((h, i) => (
+                        <li key={i}>
+                          {h.status} — {h.date}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      {order.status !== 'Remboursée' && (
+                        <button type="button" className="btn btn-outline" style={{ padding: '6px 12px' }} onClick={() => onChangeStatus(order.id)}>
+                          Statut
+                        </button>
+                      )}
+                      {order.status === 'Livrée' && !order.refunded && (
+                        <button type="button" className="btn btn-danger" style={{ padding: '6px 12px' }} onClick={() => onRefund(order.id)}>
+                          Rembourser
+                        </button>
+                      )}
+                      <button type="button" className="btn btn-secondary" style={{ padding: '6px 12px' }} onClick={() => onPrint(order)}>
+                        Imprimer
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
-              {orders && orders.length === 0 && !loading && <tr><td colSpan={5} style={{ color: '#888', textAlign: 'center', padding: 24 }}>Aucune commande</td></tr>}
+              {orders?.length === 0 && !loading && (
+                <tr>
+                  <td colSpan={5} style={{ color: 'var(--color-muted)', textAlign: 'center' }}>
+                    Aucune commande
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       )}
     </section>
   );
-} 
+}

@@ -97,37 +97,28 @@ export default function AdminClients() {
     }));
   };
 
-  // Styles
-  const section = { background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' };
-  const btn = { background: 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)', color: '#fff', border: 'none', borderRadius: 16, padding: '8px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', margin: '0 8px', boxShadow: '0 2px 8px #e0e0e0', transition: 'background 0.2s' };
-  const input = { border: '1px solid #bbb', borderRadius: 8, padding: '10px 14px', fontSize: 16, outline: 'none', margin: '0 8px 12px 0', background: '#f8fafc' };
-
   return (
-    <div style={{ padding: '2.5rem 0', maxWidth: 1200, margin: '0 auto', background: 'linear-gradient(120deg, #f8fafc 0%, #e3f2fd 100%)', minHeight: '100vh', fontFamily: 'Inter, Roboto, Arial, sans-serif' }}>
-      <h1 style={{ fontSize: 36, fontWeight: 900, color: '#1976d2', marginBottom: 36, letterSpacing: 1, textAlign: 'center' }}>Gestion des clients</h1>
-      {/* Filtres */}
-      <section style={section}>
-        <input style={input} placeholder="Recherche nom ou email" value={search} onChange={e => setSearch(e.target.value)} />
-        <select style={input} value={segment} onChange={e => setSegment(e.target.value)}>
+    <div className="ae-page" style={{ maxWidth: 1100, margin: '0 auto' }}>
+      <h1 className="ae-page-title">Clients</h1>
+      <p className="ae-page-sub">Relation client Atelier Épure</p>
+      <section className="surface" style={{ padding: '1rem 1.25rem', marginBottom: '1.25rem', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <input className="input" style={{ flex: '1 1 200px' }} placeholder="Recherche nom ou email" value={search} onChange={e => setSearch(e.target.value)} />
+        <select className="input" style={{ width: 180 }} value={segment} onChange={e => setSegment(e.target.value)}>
           <option value="">Tous segments</option>
           {SEGMENTS.map(seg => <option key={seg} value={seg}>{seg}</option>)}
         </select>
       </section>
-      {/* Liste clients */}
       <ClientTable
         clients={filtered}
         onSelect={selectClient}
         onChangeSegment={changeSegment}
         loading={loading}
         error={error}
-        input={input}
-        btn={btn}
         segments={SEGMENTS}
       />
-      {/* Détail client */}
       {selected && interactions && (
-        <section style={section}>
-          <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Historique de {selected.name}</h2>
+        <section className="surface" style={{ padding: '1.35rem', marginTop: '1.25rem' }}>
+          <h2 style={{ margin: '0 0 1rem', fontSize: '1.1rem' }}>Historique de {selected.name}</h2>
           <div style={{ marginBottom: 18 }}><b>Email :</b> {selected.email} | <b>Segment :</b> {selected.segment} | <b>Inscription :</b> {selected.registered}</div>
           <div style={{ marginBottom: 12 }}>
             <b>Commandes :</b>
@@ -142,12 +133,12 @@ export default function AdminClients() {
             <ul>
               {interactions.avis.map(avis => (
                 <li key={avis.id} style={{ marginBottom: 6 }}>
-                  <span style={{ color: '#f9a825', fontWeight: 600 }}>★{avis.note}</span> {avis.produit} : {avis.texte}
-                  {!avis.traite && <button style={btn} onClick={() => markTreated('avis', avis.id)}>Marquer traité</button>}
-                  <button style={{ ...btn, background: '#eee', color: '#e53935' }} onClick={() => removeInteraction('avis', avis.id)}>Supprimer</button>
+                  <span style={{ color: 'var(--color-secondary)', fontWeight: 600 }}>★{avis.note}</span> {avis.produit} : {avis.texte}
+                  {!avis.traite && <button type="button" className="btn btn-outline" style={{ marginLeft: 8, padding: '4px 10px' }} onClick={() => markTreated('avis', avis.id)}>Marquer traité</button>}
+                  <button type="button" className="btn btn-danger" style={{ marginLeft: 8, padding: '4px 10px' }} onClick={() => removeInteraction('avis', avis.id)}>Supprimer</button>
                 </li>
               ))}
-              {interactions.avis.length === 0 && <li style={{ color: '#888' }}>Aucun avis</li>}
+              {interactions.avis.length === 0 && <li style={{ color: 'var(--color-muted)' }}>Aucun avis</li>}
             </ul>
           </div>
           <div>
@@ -155,12 +146,12 @@ export default function AdminClients() {
             <ul>
               {interactions.reclamations.map(rec => (
                 <li key={rec.id} style={{ marginBottom: 6 }}>
-                  <span style={{ color: '#e53935', fontWeight: 600 }}>{rec.sujet}</span> : {rec.message}
-                  {!rec.traite && <button style={btn} onClick={() => markTreated('reclamations', rec.id)}>Marquer traité</button>}
-                  <button style={{ ...btn, background: '#eee', color: '#e53935' }} onClick={() => removeInteraction('reclamations', rec.id)}>Supprimer</button>
+                  <span style={{ color: 'var(--color-danger)', fontWeight: 600 }}>{rec.sujet}</span> : {rec.message}
+                  {!rec.traite && <button type="button" className="btn btn-outline" style={{ marginLeft: 8, padding: '4px 10px' }} onClick={() => markTreated('reclamations', rec.id)}>Marquer traité</button>}
+                  <button type="button" className="btn btn-danger" style={{ marginLeft: 8, padding: '4px 10px' }} onClick={() => removeInteraction('reclamations', rec.id)}>Supprimer</button>
                 </li>
               ))}
-              {interactions.reclamations.length === 0 && <li style={{ color: '#888' }}>Aucune réclamation</li>}
+              {interactions.reclamations.length === 0 && <li style={{ color: 'var(--color-muted)' }}>Aucune réclamation</li>}
             </ul>
           </div>
         </section>

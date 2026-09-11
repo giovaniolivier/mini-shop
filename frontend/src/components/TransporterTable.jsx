@@ -3,11 +3,11 @@ import React from 'react';
 export default function TransporterTable({ transporteurs, newTransport, setNewTransport, onAdd, onDelete, loading, error, input, btn }) {
   return (
     <section style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' }}>
-      <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Transporteurs</h2>
+      <h2 style={{ fontSize: 26, color: 'var(--color-primary)', fontWeight: 800, marginBottom: 18 }}>Transporteurs</h2>
       {error && <div style={{ color: '#e53935', marginBottom: 12 }}>{error}</div>}
       {loading ? (
         <div style={{ textAlign: 'center', padding: 32 }}>
-          <span style={{ fontSize: 20, color: '#1976d2' }}>Chargement des transporteurs...</span>
+          <span style={{ fontSize: 20, color: 'var(--color-primary)' }}>Chargement des transporteurs...</span>
         </div>
       ) : (
         <>

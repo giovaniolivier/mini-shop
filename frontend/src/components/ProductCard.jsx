@@ -1,44 +1,46 @@
 import React, { useState } from 'react';
 
-const imgStyle = {
-  width: '100%',
-  borderRadius: 12,
-  transition: 'transform 0.2s',
-  cursor: 'pointer',
-  boxShadow: '0 2px 8px #e0e0e0',
-};
-const imgZoom = {
-  transform: 'scale(1.15)',
-  zIndex: 2,
-  boxShadow: '0 8px 32px #bdbdbd',
-};
-
-export default function ProductCard({ product, zoom }) {
-  const [hover, setHover] = useState(false);
-  // Galerie d'images (pour la démo, on duplique l'image_url si pas d'array)
-  const images = product.images && product.images.length > 0 ? product.images : [product.image_url, product.image_url, product.image_url];
+export default function ProductCard({ product }) {
   const [imgIdx, setImgIdx] = useState(0);
+  const images =
+    product.images && product.images.length > 0
+      ? product.images
+      : [product.image_url].filter(Boolean);
+
   return (
     <div>
-      <div style={{ position: 'relative', marginBottom: 12 }}>
-        <img
-          src={images[imgIdx]}
-          alt={product.name}
-          style={zoom && hover ? { ...imgStyle, ...imgZoom } : imgStyle}
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-          onClick={() => setImgIdx((imgIdx + 1) % images.length)}
-        />
-        {images.length > 1 && (
-          <div style={{ position: 'absolute', bottom: 8, right: 8, background: '#fff', borderRadius: 8, padding: '2px 8px', fontSize: 13, color: '#1976d2' }}>
-            {imgIdx + 1}/{images.length}
-          </div>
+      <div style={{ position: 'relative', marginBottom: 4 }}>
+        {images[0] ? (
+          <img
+            src={images[imgIdx] || images[0]}
+            alt={product.name}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (images.length > 1) setImgIdx((imgIdx + 1) % images.length);
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: '100%',
+              aspectRatio: '1',
+              borderRadius: 'var(--radius-md)',
+              background: '#ebe9e4',
+            }}
+          />
+        )}
+        {product.category && (
+          <span className="ae-badge" style={{ position: 'absolute', top: 10, left: 10 }}>
+            {product.category}
+          </span>
         )}
       </div>
-      <h2 style={{ fontSize: 20, fontWeight: 700, margin: '8px 0 4px 0' }}>{product.name}</h2>
-      {product.category && <div style={{ color: '#388e3c', fontSize: 15, marginBottom: 4 }}>{product.category}</div>}
-      <p style={{ fontWeight: 600, color: '#1976d2', fontSize: 18 }}>{product.price} €</p>
-      {product.description && <p style={{ color: '#555', fontSize: 15, margin: '8px 0' }}>{product.description}</p>}
+      <h2 style={{ fontSize: '1.05rem', fontWeight: 650, margin: '0.35rem 0 0.15rem', letterSpacing: '-0.01em' }}>
+        {product.name}
+      </h2>
+      <p style={{ margin: 0, fontWeight: 600, color: 'var(--color-secondary)', fontSize: '1rem' }}>
+        {product.price} €
+      </p>
     </div>
   );
 }

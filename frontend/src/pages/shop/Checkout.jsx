@@ -4,9 +4,9 @@ import * as cartApi from '../../services/cartApi';
 import { createOrder } from '../../services/ordersApi';
 
 const DELIVERY_OPTIONS = [
-  { label: 'Standard (5€)', value: 'standard', price: 5 },
-  { label: 'Express (10€)', value: 'express', price: 10 },
-  { label: 'Retrait magasin (gratuit)', value: 'pickup', price: 0 },
+  { label: 'Standard (5 €)', value: 'standard', price: 5 },
+  { label: 'Express (10 €)', value: 'express', price: 10 },
+  { label: 'Retrait atelier (gratuit)', value: 'pickup', price: 0 },
 ];
 const PAYMENT_OPTIONS = [
   { label: 'Carte bancaire', value: 'card' },
@@ -15,10 +15,7 @@ const PAYMENT_OPTIONS = [
 ];
 
 function applyCart(res) {
-  return {
-    items: res.data.items || [],
-    total: res.data.total || 0,
-  };
+  return { items: res.data.items || [], total: res.data.total || 0 };
 }
 
 export default function Checkout() {
@@ -46,7 +43,7 @@ export default function Checkout() {
       .then((res) => setCartState(applyCart(res)))
       .catch((err) => {
         if (err.response?.data?.message === 'Produit non présent dans le panier') reloadCartOnMissing();
-        else alert('Erreur modification quantité : ' + (err.response?.data?.message || err.message));
+        else alert(err.response?.data?.message || err.message);
       });
   };
 
@@ -57,7 +54,7 @@ export default function Checkout() {
       .then((res) => setCartState(applyCart(res)))
       .catch((err) => {
         if (err.response?.data?.message === 'Produit non présent dans le panier') reloadCartOnMissing();
-        else alert('Erreur modification quantité : ' + (err.response?.data?.message || err.message));
+        else alert(err.response?.data?.message || err.message);
       });
   };
 
@@ -67,7 +64,7 @@ export default function Checkout() {
       .then((res) => setCartState(applyCart(res)))
       .catch((err) => {
         if (err.response?.data?.message === 'Produit non présent dans le panier') reloadCartOnMissing();
-        else alert('Erreur suppression du panier : ' + (err.response?.data?.message || err.message));
+        else alert(err.response?.data?.message || err.message);
       });
   };
 
@@ -75,22 +72,22 @@ export default function Checkout() {
     try {
       await createOrder(
         cartState.items.map((item) => ({
-          productId: item.ProductId || item.productId || (item.Product ? item.Product.id : undefined),
+          productId: item.ProductId || item.productId || item.Product?.id,
           quantity: item.quantity,
         }))
       );
       await cartApi.clearCart();
       setCartState({ items: [], total: 0 });
-      alert('🎉 Merci pour votre commande !\nVotre achat a bien été pris en compte.\nVous recevrez un email de confirmation sous peu.\nÀ très bientôt sur MiniShop !');
+      alert('Merci pour votre commande Atelier Épure. Confirmation envoyée sous peu.');
       navigate('/dashboard');
     } catch (err) {
-      alert('Erreur lors de la validation de la commande : ' + (err.response?.data?.message || err.message));
+      alert(err.response?.data?.message || err.message);
     }
   };
 
   const handleNextStep = (nextStep) => {
     if (cartState.items.length === 0) {
-      alert('🛒 Votre panier est vide !\nAjoutez des produits avant de poursuivre votre commande.');
+      alert('Votre panier est vide.');
       return;
     }
     setStep(nextStep);
@@ -102,101 +99,165 @@ export default function Checkout() {
   const taxes = Math.round(subtotal * 0.2 * 100) / 100;
   const total = subtotal + deliveryPrice + taxes;
 
-  const section = { background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' };
-  const btn = { background: 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)', color: '#fff', border: 'none', borderRadius: 18, padding: '12px 36px', fontSize: 18, fontWeight: 800, cursor: 'pointer', margin: '0 8px', boxShadow: '0 2px 8px #e0e0e0' };
-  const btnSec = { ...btn, background: '#eee', color: '#222', boxShadow: 'none' };
-  const stepBadge = (active) => ({ display: 'inline-block', minWidth: 36, height: 36, lineHeight: '36px', borderRadius: '50%', background: active ? 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)' : '#e3f2fd', color: active ? '#fff' : '#1976d2', fontWeight: 800, fontSize: 18, textAlign: 'center', marginRight: 12, boxShadow: active ? '0 2px 8px #e0e0e0' : 'none' });
-  const stepTitle = (active) => ({ color: active ? '#1976d2' : '#888', fontWeight: 800, fontSize: 18, marginRight: 24 });
+  const steps = ['Panier', 'Livraison', 'Paiement', 'Récap'];
 
   return (
-    <div style={{ padding: '2.5rem 0', maxWidth: 800, margin: '0 auto', background: 'linear-gradient(120deg, #f8fafc 0%, #e3f2fd 100%)', minHeight: '100vh', fontFamily: 'Inter, Roboto, Arial, sans-serif' }}>
-      <h1 style={{ fontSize: 36, fontWeight: 900, color: '#1976d2', marginBottom: 36, letterSpacing: 1, textAlign: 'center' }}>Finaliser ma commande</h1>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 36, gap: 18 }}>
-        <span style={stepBadge(step === 1)}>1</span><span style={stepTitle(step === 1)}>Panier</span>
-        <span style={{ fontSize: 22, color: '#bbb' }}>→</span>
-        <span style={stepBadge(step === 2)}>2</span><span style={stepTitle(step === 2)}>Livraison</span>
-        <span style={{ fontSize: 22, color: '#bbb' }}>→</span>
-        <span style={stepBadge(step === 3)}>3</span><span style={stepTitle(step === 3)}>Paiement</span>
-        <span style={{ fontSize: 22, color: '#bbb' }}>→</span>
-        <span style={stepBadge(step === 4)}>4</span><span style={stepTitle(step === 4)}>Récapitulatif</span>
+    <div className="ae-page" style={{ maxWidth: 720, margin: '0 auto' }}>
+      <h1 className="ae-page-title">Finaliser la commande</h1>
+      <p className="ae-page-sub">Étape {step} sur 4 — Atelier Épure</p>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: '1.75rem' }}>
+        {steps.map((label, i) => {
+          const n = i + 1;
+          const active = step === n;
+          return (
+            <div
+              key={label}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                opacity: active ? 1 : 0.45,
+                fontWeight: active ? 700 : 500,
+              }}
+            >
+              <span
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: 8,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: active ? 'var(--color-primary)' : '#ebe9e4',
+                  color: active ? '#fff' : 'var(--color-primary)',
+                  fontSize: 13,
+                }}
+              >
+                {n}
+              </span>
+              {label}
+            </div>
+          );
+        })}
       </div>
-      {step === 1 && (
-        <section style={section}>
-          <h2 style={{ fontSize: 24, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Mon panier</h2>
-          {filteredItems.length === 0 ? <p style={{ color: '#888', fontSize: 18 }}>Votre panier est vide.</p> : (
-            <div style={{ maxHeight: 320, overflowY: 'auto' }}>
-              {filteredItems.map((item) => (
-                <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 18, borderBottom: '1px solid #f0f0f0', paddingBottom: 10 }}>
-                  <img src={item.Product?.image_url || item.image_url} alt={item.Product?.name || item.name} style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 12, boxShadow: '0 1px 6px #e0e0e0' }} />
+
+      <section className="surface" style={{ padding: '1.5rem' }}>
+        {step === 1 && (
+          <>
+            {filteredItems.length === 0 ? (
+              <p style={{ color: 'var(--color-muted)' }}>Votre panier est vide.</p>
+            ) : (
+              filteredItems.map((item) => (
+                <div
+                  key={item.id}
+                  style={{
+                    display: 'flex',
+                    gap: 14,
+                    alignItems: 'center',
+                    padding: '12px 0',
+                    borderBottom: '1px solid var(--color-border)',
+                  }}
+                >
+                  <img
+                    src={item.Product?.image_url}
+                    alt={item.Product?.name}
+                    style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 10, background: '#ebe9e4' }}
+                  />
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 700, color: '#1976d2', fontSize: 17 }}>{item.Product?.name || item.name}</div>
-                    <div style={{ color: '#555', fontSize: 15 }}>{item.price} € x {item.quantity}</div>
-                    <div style={{ color: '#888', fontSize: 14 }}>Total : {(item.price * item.quantity).toFixed(2)} €</div>
+                    <div style={{ fontWeight: 600 }}>{item.Product?.name}</div>
+                    <div style={{ color: 'var(--color-muted)', fontSize: 14 }}>
+                      {item.price} € × {item.quantity}
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                    <button onClick={() => addQty(item.ProductId)} style={{ background: '#e3f2fd', border: 'none', borderRadius: 8, fontWeight: 700, color: '#1976d2', fontSize: 18, padding: '2px 8px', cursor: 'pointer' }}>+</button>
-                    <button onClick={() => subQty(item.ProductId)} style={{ background: '#e3f2fd', border: 'none', borderRadius: 8, fontWeight: 700, color: '#1976d2', fontSize: 18, padding: '2px 8px', cursor: 'pointer' }}>-</button>
-                    <button onClick={() => removeItem(item.ProductId)} style={{ background: '#ffe0e0', border: 'none', borderRadius: 8, fontWeight: 700, color: '#e53935', fontSize: 15, padding: '2px 8px', cursor: 'pointer' }}>Suppr.</button>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button type="button" className="btn btn-secondary" style={{ padding: '4px 10px' }} onClick={() => addQty(item.ProductId)}>
+                      +
+                    </button>
+                    <button type="button" className="btn btn-secondary" style={{ padding: '4px 10px' }} onClick={() => subQty(item.ProductId)}>
+                      −
+                    </button>
+                    <button type="button" className="btn btn-danger" style={{ padding: '4px 10px' }} onClick={() => removeItem(item.ProductId)}>
+                      Suppr.
+                    </button>
                   </div>
                 </div>
-              ))}
+              ))
+            )}
+            <div style={{ marginTop: 20, textAlign: 'right' }}>
+              <button type="button" className="btn btn-primary" disabled={cartState.items.length === 0} onClick={() => handleNextStep(2)}>
+                Suivant
+              </button>
             </div>
-          )}
-          <div style={{ marginTop: 24, textAlign: 'right' }}>
-            <button style={btn} onClick={() => handleNextStep(2)} disabled={cartState.items.length === 0}>Suivant</button>
-          </div>
-        </section>
-      )}
-      {step === 2 && (
-        <section style={section}>
-          <h2 style={{ fontSize: 24, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Mode de livraison</h2>
-          {DELIVERY_OPTIONS.map((opt) => (
-            <label key={opt.value} style={{ display: 'block', margin: '16px 0', fontSize: 18 }}>
-              <input type="radio" name="delivery" value={opt.value} checked={delivery === opt.value} onChange={(e) => setDelivery(e.target.value)} /> {opt.label}
-            </label>
-          ))}
-          <div style={{ marginTop: 32, textAlign: 'right' }}>
-            <button style={btnSec} onClick={() => setStep(1)}>Précédent</button>
-            <button style={btn} onClick={() => setStep(3)}>Suivant</button>
-          </div>
-        </section>
-      )}
-      {step === 3 && (
-        <section style={section}>
-          <h2 style={{ fontSize: 24, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Mode de paiement</h2>
-          {PAYMENT_OPTIONS.map((opt) => (
-            <label key={opt.value} style={{ display: 'block', margin: '16px 0', fontSize: 18 }}>
-              <input type="radio" name="payment" value={opt.value} checked={payment === opt.value} onChange={(e) => setPayment(e.target.value)} /> {opt.label}
-            </label>
-          ))}
-          <div style={{ marginTop: 32, textAlign: 'right' }}>
-            <button style={btnSec} onClick={() => setStep(2)}>Précédent</button>
-            <button style={btn} onClick={() => setStep(4)}>Suivant</button>
-          </div>
-        </section>
-      )}
-      {step === 4 && (
-        <section style={section}>
-          <h2 style={{ fontSize: 24, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Récapitulatif</h2>
-          <ul style={{ marginBottom: 18 }}>
-            {filteredItems.map((item) => (
-              <li key={item.id} style={{ fontSize: 17, margin: '8px 0' }}>{item.Product?.name || item.name} x {item.quantity} = {(item.price * item.quantity).toFixed(2)} €</li>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            {DELIVERY_OPTIONS.map((opt) => (
+              <label key={opt.value} style={{ display: 'flex', gap: 10, alignItems: 'center', margin: '12px 0', fontSize: 16 }}>
+                <input type="radio" name="delivery" value={opt.value} checked={delivery === opt.value} onChange={(e) => setDelivery(e.target.value)} />
+                {opt.label}
+              </label>
             ))}
-          </ul>
-          <div style={{ margin: '18px 0', fontSize: 18 }}>
-            <div>Sous-total : <b>{subtotal.toFixed(2)} €</b></div>
-            <div>Frais de livraison : <b>{deliveryPrice.toFixed(2)} €</b></div>
-            <div>Taxes (20%) : <b>{taxes.toFixed(2)} €</b></div>
-            <div style={{ fontSize: 22, color: '#1976d2', marginTop: 8 }}>Total à payer : <b>{total.toFixed(2)} €</b></div>
-            <div style={{ marginTop: 12 }}>Livraison : <b>{DELIVERY_OPTIONS.find((opt) => opt.value === delivery)?.label}</b></div>
-            <div>Paiement : <b>{PAYMENT_OPTIONS.find((opt) => opt.value === payment)?.label}</b></div>
-          </div>
-          <div style={{ marginTop: 32, textAlign: 'right' }}>
-            <button style={btnSec} onClick={() => setStep(3)}>Précédent</button>
-            <button style={btn} onClick={handleConfirm}>Valider la commande</button>
-          </div>
-        </section>
-      )}
+            <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <button type="button" className="btn btn-secondary" onClick={() => setStep(1)}>
+                Précédent
+              </button>
+              <button type="button" className="btn btn-primary" onClick={() => setStep(3)}>
+                Suivant
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            {PAYMENT_OPTIONS.map((opt) => (
+              <label key={opt.value} style={{ display: 'flex', gap: 10, alignItems: 'center', margin: '12px 0', fontSize: 16 }}>
+                <input type="radio" name="payment" value={opt.value} checked={payment === opt.value} onChange={(e) => setPayment(e.target.value)} />
+                {opt.label}
+              </label>
+            ))}
+            <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <button type="button" className="btn btn-secondary" onClick={() => setStep(2)}>
+                Précédent
+              </button>
+              <button type="button" className="btn btn-primary" onClick={() => setStep(4)}>
+                Suivant
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === 4 && (
+          <>
+            <ul style={{ paddingLeft: 18, marginBottom: 16 }}>
+              {filteredItems.map((item) => (
+                <li key={item.id} style={{ margin: '6px 0' }}>
+                  {item.Product?.name} × {item.quantity} — {(item.price * item.quantity).toFixed(2)} €
+                </li>
+              ))}
+            </ul>
+            <div style={{ fontSize: 15, lineHeight: 1.7 }}>
+              <div>Sous-total : <b>{subtotal.toFixed(2)} €</b></div>
+              <div>Livraison : <b>{deliveryPrice.toFixed(2)} €</b></div>
+              <div>Taxes (20 %) : <b>{taxes.toFixed(2)} €</b></div>
+              <div style={{ fontSize: 18, marginTop: 8, color: 'var(--color-secondary)' }}>
+                Total : <b>{total.toFixed(2)} €</b>
+              </div>
+            </div>
+            <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
+              <button type="button" className="btn btn-secondary" onClick={() => setStep(3)}>
+                Précédent
+              </button>
+              <button type="button" className="btn btn-accent" onClick={handleConfirm}>
+                Valider la commande
+              </button>
+            </div>
+          </>
+        )}
+      </section>
     </div>
   );
 }

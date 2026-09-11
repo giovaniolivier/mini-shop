@@ -19,10 +19,10 @@ export default function AdminSettings() {
   const section = { background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' };
   const label = { fontWeight: 600, marginRight: 12 };
   const input = { border: '1px solid #bbb', borderRadius: 8, padding: '10px 14px', fontSize: 16, outline: 'none', margin: '0 8px 12px 0', background: '#f8fafc' };
-  const btn = { background: 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)', color: '#fff', border: 'none', borderRadius: 16, padding: '8px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', margin: '0 8px', boxShadow: '0 2px 8px #e0e0e0', transition: 'background 0.2s' };
+  const btn = { background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 16, padding: '8px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', margin: '0 8px', boxShadow: '0 2px 8px #e0e0e0', transition: 'background 0.2s' };
 
   if (loading || !settings) {
-    return <div style={{ textAlign: 'center', padding: 64 }}><span style={{ fontSize: 24, color: '#1976d2' }}>Chargement de la configuration...</span></div>;
+    return <div style={{ textAlign: 'center', padding: 64 }}><span style={{ fontSize: 24, color: 'var(--color-primary)' }}>Chargement de la configuration...</span></div>;
   }
 
   // Handlers
@@ -82,11 +82,12 @@ export default function AdminSettings() {
   };
 
   return (
-    <div style={{ padding: '2.5rem 0', maxWidth: 900, margin: '0 auto', background: 'linear-gradient(120deg, #f8fafc 0%, #e3f2fd 100%)', minHeight: '100vh', fontFamily: 'Inter, Roboto, Arial, sans-serif' }}>
-      <h1 style={{ fontSize: 36, fontWeight: 900, color: '#1976d2', marginBottom: 36, letterSpacing: 1, textAlign: 'center' }}>Configuration système</h1>
+    <div className="ae-page" style={{ maxWidth: 900, margin: '0 auto' }}>
+      <h1 className="ae-page-title">Paramètres</h1>
+      <p className="ae-page-sub">Configuration Atelier Épure</p>
       {/* Paramètres généraux */}
       <section style={section}>
-        <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Paramètres généraux</h2>
+        <h2 style={{ fontSize: 26, color: 'var(--color-primary)', fontWeight: 800, marginBottom: 18 }}>Paramètres généraux</h2>
         <div style={{ marginBottom: 16 }}>
           <span style={label}>Devise :</span>
           <select style={input} value={settings.devise} onChange={e => handleUpdate({ devise: e.target.value })}>
@@ -102,7 +103,7 @@ export default function AdminSettings() {
       </section>
       {/* Modes de paiement */}
       <section style={section}>
-        <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Modes de paiement</h2>
+        <h2 style={{ fontSize: 26, color: 'var(--color-primary)', fontWeight: 800, marginBottom: 18 }}>Modes de paiement</h2>
         <ul style={{ paddingLeft: 0 }}>
           {PAIEMENTS.map(p => (
             <li key={p.key} style={{ fontSize: 17, margin: '8px 0', listStyle: 'none' }}>
@@ -126,9 +127,9 @@ export default function AdminSettings() {
       />
       {/* Sauvegardes et sécurité */}
       <section style={section}>
-        <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Sauvegardes & sécurité</h2>
+        <h2 style={{ fontSize: 26, color: 'var(--color-primary)', fontWeight: 800, marginBottom: 18 }}>Sauvegardes & sécurité</h2>
         <button style={btn} onClick={exportData}>Exporter configuration</button>
-        <label style={{ ...btn, background: '#eee', color: '#1976d2', cursor: 'pointer' }}>
+        <label style={{ ...btn, background: '#eee', color: 'var(--color-primary)', cursor: 'pointer' }}>
           Importer configuration
           <input type="file" accept=".json" style={{ display: 'none' }} onChange={importData} />
         </label>

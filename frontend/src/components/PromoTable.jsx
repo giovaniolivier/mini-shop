@@ -3,7 +3,7 @@ import React from 'react';
 export default function PromoTable({ promos, promoForm, setPromoForm, onAdd, onDelete, loading, error, input, btn }) {
   return (
     <section style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' }}>
-      <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Codes promo</h2>
+      <h2 style={{ fontSize: 26, color: 'var(--color-primary)', fontWeight: 800, marginBottom: 18 }}>Codes promo</h2>
       {error && <div style={{ color: '#e53935', marginBottom: 12 }}>{error}</div>}
       <div style={{ marginBottom: 12 }}>
         <input style={input} placeholder="Code" value={promoForm.code} onChange={e => setPromoForm(f => ({ ...f, code: e.target.value }))} />
@@ -17,7 +17,7 @@ export default function PromoTable({ promos, promoForm, setPromoForm, onAdd, onD
       </div>
       {loading ? (
         <div style={{ textAlign: 'center', padding: 32 }}>
-          <span style={{ fontSize: 20, color: '#1976d2' }}>Chargement des codes promo...</span>
+          <span style={{ fontSize: 20, color: 'var(--color-primary)' }}>Chargement des codes promo...</span>
         </div>
       ) : (
         <ul style={{ paddingLeft: 0 }}>

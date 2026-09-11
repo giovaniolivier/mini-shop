@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '../../services/productsApi';
 import ProductTable from '../../components/ProductTable';
 import ProductForm from '../../components/ProductForm';
@@ -137,11 +136,8 @@ export default function AdminProducts() {
     }
   };
 
-  // Styles
-  const section = { background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' };
-  const btn = { background: 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)', color: '#fff', border: 'none', borderRadius: 16, padding: '10px 24px', fontSize: 16, fontWeight: 700, cursor: 'pointer', margin: '0 8px', boxShadow: '0 2px 8px #e0e0e0', transition: 'background 0.2s' };
-  const input = { border: '1px solid #bbb', borderRadius: 8, padding: '10px 14px', fontSize: 16, outline: 'none', margin: '0 8px 12px 0', background: '#f8fafc' };
-  const stockStyle = (stock) => ({ color: stock < 5 ? '#e53935' : '#388e3c', fontWeight: 700 });
+  // Styles Atelier Épure
+  const stockStyle = (stock) => ({ color: stock < 5 ? 'var(--color-danger)' : 'var(--color-tertiary)', fontWeight: 700 });
 
   // Données pour le chart : nombre de produits par catégorie
   const chartData = categoryList.map(cat => ({
@@ -154,30 +150,26 @@ export default function AdminProducts() {
   const produitsCritiques = products.filter(p => Number(p.stock) <= STOCK_CRITIQUE);
 
   return (
-    <div style={{ padding: '2.5rem 0', maxWidth: 1200, margin: '0 auto', background: 'linear-gradient(120deg, #f8fafc 0%, #e3f2fd 100%)', minHeight: '100vh', fontFamily: 'Inter, Roboto, Arial, sans-serif' }}>
-      <h1 style={{ fontSize: 36, fontWeight: 900, color: '#1976d2', marginBottom: 36, letterSpacing: 1, textAlign: 'center' }}>Gestion des produits</h1>
-      {/* Alerte stock critique */}
+    <div className="ae-page" style={{ maxWidth: 1100, margin: '0 auto' }}>
+      <h1 className="ae-page-title">Produits</h1>
+      <p className="ae-page-sub">Catalogue Atelier Épure</p>
       {produitsCritiques.length > 0 && (
-        <div style={{ background: '#fff3e0', border: '1px solid #ff9800', color: '#e65100', borderRadius: 12, padding: '18px 28px', margin: '0 auto 32px auto', maxWidth: 700, boxShadow: '0 2px 12px #ffe0b2', fontWeight: 600, fontSize: 17, display: 'flex', alignItems: 'center', gap: 16 }}>
-          <span style={{ fontSize: 22, marginRight: 10 }}>⚠️</span>
-          <span>Attention, stock critique pour&nbsp;</span>
-          <span style={{ fontWeight: 800, color: '#d84315' }}>{produitsCritiques.map(p => p.name).join(', ')}</span>
+        <div className="surface" style={{ padding: '1rem 1.25rem', marginBottom: '1.25rem', borderColor: 'rgba(184,115,51,0.35)' }}>
+          <strong style={{ color: 'var(--color-secondary)' }}>Stock critique :</strong>{' '}
+          {produitsCritiques.map(p => p.name).join(', ')}
         </div>
       )}
-      {/* Chart moderne simplifié */}
-      <section style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0', maxWidth: 700, marginLeft: 'auto', marginRight: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <h2 style={{ fontSize: 24, color: '#1976d2', fontWeight: 800, marginBottom: 24, textAlign: 'center', letterSpacing: 0.5 }}>Produits par catégorie</h2>
+      <section className="surface" style={{ padding: '1.35rem', marginBottom: '1.25rem' }}>
+        <h2 style={{ margin: '0 0 1rem', fontSize: '1.1rem' }}>Produits par catégorie</h2>
         <ProductChart chartData={chartData} />
       </section>
-      {/* Import/export */}
-      <section style={section}>
-        <button style={btn} onClick={handleExport}>Exporter catalogue JSON</button>
-        <label style={{ ...btn, background: '#eee', color: '#1976d2', cursor: 'pointer' }}>
-          Importer catalogue
+      <section className="surface" style={{ padding: '1rem 1.25rem', marginBottom: '1.25rem', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <button type="button" className="btn btn-primary" onClick={handleExport}>Exporter JSON</button>
+        <label className="btn btn-secondary" style={{ cursor: 'pointer' }}>
+          Importer
           <input type="file" accept=".json" style={{ display: 'none' }} onChange={handleImport} />
         </label>
       </section>
-      {/* Formulaire produit */}
       <ProductForm
         form={form}
         setForm={setForm}
@@ -189,18 +181,13 @@ export default function AdminProducts() {
         setDragActive={setDragActive}
         handleImageDrop={handleImageDrop}
         handleImageSelect={handleImageSelect}
-        input={input}
-        btn={btn}
-        section={section}
         addCategory={addCategory}
       />
-      {/* Liste produits sous forme de tableau */}
       <ProductTable
         products={products}
         onEdit={handleEdit}
         onDelete={handleDelete}
         stockStyle={stockStyle}
-        btn={btn}
         loading={loading}
         error={error}
       />

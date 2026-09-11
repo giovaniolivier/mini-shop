@@ -3,35 +3,56 @@ import { getClientOrders } from '../../services/ordersApi';
 import { formatDate } from '../../utils/format';
 
 function Badge({ status }) {
-  const color = status === 'Validée' ? '#43a047' : status === 'Remboursée' ? '#e53935' : '#1976d2';
-  return <span style={{ background: color, color: '#fff', borderRadius: 8, padding: '2px 10px', fontWeight: 700, fontSize: 15 }}>{status}</span>;
+  const isOk = status === 'Validée';
+  const isBad = status === 'Remboursée';
+  return (
+    <span
+      className="ae-badge"
+      style={{
+        background: isOk ? 'rgba(31,58,82,0.12)' : isBad ? 'var(--color-danger-bg)' : 'rgba(184,115,51,0.12)',
+        color: isOk ? 'var(--color-tertiary)' : isBad ? 'var(--color-danger)' : 'var(--color-secondary)',
+      }}
+    >
+      {status}
+    </span>
+  );
 }
 
 function Facture({ order }) {
-  // Simule une facture simple (HTML imprimable)
   return (
-    <div style={{ padding: 32, fontFamily: 'Inter, Arial, sans-serif', maxWidth: 600, margin: '0 auto' }}>
-      <h2 style={{ color: '#1976d2' }}>Facture - Commande #{order.id}</h2>
+    <div>
+      <h2 style={{ marginTop: 0 }}>Facture — Commande #{order.id}</h2>
       <div>Date : {formatDate(order.date)}</div>
       <div>Client : {order.client}</div>
-      <hr style={{ margin: '18px 0' }} />
-      <table style={{ width: '100%', marginBottom: 18 }}>
-        <thead>
-          <tr><th>Produit</th><th>Quantité</th><th>Prix unitaire</th><th>Total</th></tr>
-        </thead>
-        <tbody>
-          {order.items.map((item, idx) => (
-            <tr key={idx}>
-              <td>{item.Product?.name || item.name}</td>
-              <td>{item.quantity}</td>
-              <td>{item.price.toFixed(2)} €</td>
-              <td>{(item.price * item.quantity).toFixed(2)} €</td>
+      <hr style={{ border: 0, borderTop: '1px solid var(--color-border)', margin: '16px 0' }} />
+      <div className="ae-table-wrap">
+        <table className="ae-table">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Qté</th>
+              <th>Prix</th>
+              <th>Total</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div style={{ fontWeight: 700, fontSize: 18, color: '#1976d2' }}>Total : {order.items.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2)} €</div>
-      <div style={{ marginTop: 18 }}>Statut : <Badge status={order.status} /></div>
+          </thead>
+          <tbody>
+            {order.items.map((item, idx) => (
+              <tr key={idx}>
+                <td>{item.Product?.name || item.name}</td>
+                <td>{item.quantity}</td>
+                <td>{item.price.toFixed(2)} €</td>
+                <td>{(item.price * item.quantity).toFixed(2)} €</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div style={{ fontWeight: 700, marginTop: 14, color: 'var(--color-secondary)' }}>
+        Total : {order.items.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2)} €
+      </div>
+      <div style={{ marginTop: 12 }}>
+        Statut : <Badge status={order.status} />
+      </div>
     </div>
   );
 }
@@ -46,7 +67,7 @@ export default function ClientOrders() {
   useEffect(() => {
     setLoading(true);
     getClientOrders()
-      .then(res => {
+      .then((res) => {
         setOrders(res.data);
         setLoading(false);
       })
@@ -56,97 +77,133 @@ export default function ClientOrders() {
       });
   }, []);
 
-  const handleDetail = (order) => setSelected(order);
-  const handleClose = () => setSelected(null);
-  const handleFacture = (order) => { setSelected(order); setShowFacture(true); };
-  const handleCloseFacture = () => setShowFacture(false);
-  const handlePrint = () => window.print();
-
   return (
-    <div style={{ background: 'linear-gradient(120deg, #f8fafc 0%, #e3f2fd 100%)', minHeight: '100vh', padding: '2rem 0 0 0', borderRadius: 10, fontFamily: 'Inter, Roboto, Arial, sans-serif' }}>
-      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 20px' }}>
-        <h2 style={{ fontSize: 32, fontWeight: 900, color: '#1976d2', marginBottom: 36, letterSpacing: 1 }}>Mes commandes</h2>
-        <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32 }}>
-          {loading ? (
-            <div>Chargement...</div>
-          ) : error ? (
-            <div style={{ color: '#e53935' }}>{error}</div>
-          ) : orders.length === 0 ? (
-            <div style={{ color: '#888', fontSize: 16 }}>Aucune commande pour l'instant.</div>
-          ) : (
-            <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, background: '#fff', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 12px #ececec' }}>
+    <div className="ae-page" style={{ maxWidth: 1000, margin: '0 auto' }}>
+      <h1 className="ae-page-title">Mes commandes</h1>
+      <p className="ae-page-sub">Historique de vos achats Atelier Épure.</p>
+
+      <section className="surface" style={{ padding: '1.25rem' }}>
+        {loading ? (
+          <p style={{ color: 'var(--color-muted)' }}>Chargement…</p>
+        ) : error ? (
+          <p style={{ color: 'var(--color-danger)' }}>{error}</p>
+        ) : orders.length === 0 ? (
+          <p style={{ color: 'var(--color-muted)' }}>Aucune commande pour l&apos;instant.</p>
+        ) : (
+          <div className="ae-table-wrap">
+            <table className="ae-table">
               <thead>
                 <tr>
-                  <th style={{ background: '#f4f7fa', padding: 14, fontWeight: 800, color: '#1976d2', fontSize: 17, textAlign: 'center' }}>Date</th>
-                  <th style={{ background: '#f4f7fa', padding: 14, fontWeight: 800, color: '#1976d2', fontSize: 17, textAlign: 'center' }}>Produits</th>
-                  <th style={{ background: '#f4f7fa', padding: 14, fontWeight: 800, color: '#1976d2', fontSize: 17, textAlign: 'center' }}>Total</th>
-                  <th style={{ background: '#f4f7fa', padding: 14, fontWeight: 800, color: '#1976d2', fontSize: 17, textAlign: 'center' }}>Statut</th>
-                  <th style={{ background: '#f4f7fa', padding: 14, fontWeight: 800, color: '#1976d2', fontSize: 17, textAlign: 'center' }}>Actions</th>
+                  <th>Date</th>
+                  <th>Produits</th>
+                  <th>Total</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {orders.map((order, idx) => (
-                  <tr key={order.id || idx} style={idx % 2 === 1 ? { background: '#f8fafc' } : {}}>
-                    <td style={{ padding: 13, textAlign: 'center' }}>{formatDate(order.date)}</td>
-                    <td style={{ padding: 13, textAlign: 'center' }}>{order.items.map(i => `${i.Product?.name || i.name} x${i.quantity}`).join(', ')}</td>
-                    <td style={{ padding: 13, fontWeight: 700, textAlign: 'center' }}>{order.items.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2)} €</td>
-                    <td style={{ padding: 13, textAlign: 'center' }}><Badge status={order.status} /></td>
-                    <td style={{ padding: 13, textAlign: 'center' }}>
-                      <button style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 16px', fontWeight: 700, marginRight: 8, cursor: 'pointer' }} onClick={() => handleDetail(order)}>Détail</button>
-                      <button style={{ background: '#43a047', color: '#fff', border: 'none', borderRadius: 8, padding: '6px 16px', fontWeight: 700, cursor: 'pointer' }} onClick={() => handleFacture(order)}>Facture</button>
+                {orders.map((order) => (
+                  <tr key={order.id}>
+                    <td>{formatDate(order.date)}</td>
+                    <td>{order.items.map((i) => `${i.Product?.name || i.name} ×${i.quantity}`).join(', ')}</td>
+                    <td>{order.items.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2)} €</td>
+                    <td>
+                      <Badge status={order.status} />
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        <button type="button" className="btn btn-outline" style={{ padding: '6px 12px' }} onClick={() => { setSelected(order); setShowFacture(false); }}>
+                          Détail
+                        </button>
+                        <button type="button" className="btn btn-secondary" style={{ padding: '6px 12px' }} onClick={() => { setSelected(order); setShowFacture(true); }}>
+                          Facture
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          )}
-        </div>
-      </div>
-      {/* Modale détail commande */}
+          </div>
+        )}
+      </section>
+
       {selected && !showFacture && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={handleClose}>
-          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #e0e0e0', padding: 36, minWidth: 420, maxWidth: 600, position: 'relative' }} onClick={e => e.stopPropagation()}>
-            <button onClick={handleClose} style={{ position: 'absolute', top: 18, right: 18, background: 'none', border: 'none', fontSize: 26, color: '#888', cursor: 'pointer' }}>&times;</button>
-            <h3 style={{ color: '#1976d2', fontWeight: 800, fontSize: 24, marginBottom: 18 }}>Détail commande #{selected.id}</h3>
-            <div style={{ marginBottom: 10 }}>Date : <b>{formatDate(selected.date)}</b></div>
-            <div style={{ marginBottom: 10 }}>Statut : <Badge status={selected.status} /></div>
-            <div style={{ marginBottom: 10 }}>Client : <b>{selected.client}</b></div>
-            <table style={{ width: '100%', margin: '18px 0' }}>
-              <thead>
-                <tr><th>Produit</th><th>Quantité</th><th>Prix unitaire</th><th>Total</th></tr>
-              </thead>
-              <tbody>
-                {selected.items.map((item, idx) => (
-                  <tr key={idx}>
-                    <td>{item.Product?.name || item.name}</td>
-                    <td>{item.quantity}</td>
-                    <td>{item.price.toFixed(2)} €</td>
-                    <td>{(item.price * item.quantity).toFixed(2)} €</td>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(18,20,23,0.35)',
+            zIndex: 2000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setSelected(null)}
+        >
+          <div className="surface" style={{ padding: 28, maxWidth: 560, width: '100%', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="btn btn-secondary" style={{ position: 'absolute', top: 12, right: 12, padding: '4px 10px' }} onClick={() => setSelected(null)}>
+              ✕
+            </button>
+            <h3 style={{ marginTop: 0 }}>Commande #{selected.id}</h3>
+            <p>
+              Date : <b>{formatDate(selected.date)}</b>
+            </p>
+            <p>
+              Statut : <Badge status={selected.status} />
+            </p>
+            <div className="ae-table-wrap" style={{ marginTop: 12 }}>
+              <table className="ae-table">
+                <thead>
+                  <tr>
+                    <th>Produit</th>
+                    <th>Qté</th>
+                    <th>Prix</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <div style={{ fontWeight: 700, fontSize: 18, color: '#1976d2', marginTop: 18 }}>Total : {selected.items.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2)} €</div>
-            <div style={{ marginTop: 24, textAlign: 'right' }}>
-              <button style={{ background: '#43a047', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 22px', fontWeight: 700, fontSize: 16, marginRight: 8, cursor: 'pointer' }} onClick={() => handleFacture(selected)}>Facture</button>
-              <button style={{ background: '#eee', color: '#1976d2', border: 'none', borderRadius: 8, padding: '8px 22px', fontWeight: 700, fontSize: 16, cursor: 'pointer' }} onClick={handleClose}>Fermer</button>
+                </thead>
+                <tbody>
+                  {selected.items.map((item, idx) => (
+                    <tr key={idx}>
+                      <td>{item.Product?.name || item.name}</td>
+                      <td>{item.quantity}</td>
+                      <td>{(item.price * item.quantity).toFixed(2)} €</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       )}
-      {/* Modale facture */}
+
       {showFacture && selected && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.25)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }} onClick={handleCloseFacture}>
-          <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 4px 24px #e0e0e0', padding: 36, minWidth: 420, maxWidth: 700, position: 'relative' }} onClick={e => e.stopPropagation()}>
-            <button onClick={handleCloseFacture} style={{ position: 'absolute', top: 18, right: 18, background: 'none', border: 'none', fontSize: 26, color: '#888', cursor: 'pointer' }}>&times;</button>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(18,20,23,0.35)',
+            zIndex: 3000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+          onClick={() => setShowFacture(false)}
+        >
+          <div className="surface" style={{ padding: 28, maxWidth: 640, width: '100%', position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="btn btn-secondary" style={{ position: 'absolute', top: 12, right: 12, padding: '4px 10px' }} onClick={() => setShowFacture(false)}>
+              ✕
+            </button>
             <Facture order={selected} />
-            <div style={{ marginTop: 24, textAlign: 'right' }}>
-              <button style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 22px', fontWeight: 700, fontSize: 16, marginRight: 8, cursor: 'pointer' }} onClick={handlePrint}>Imprimer</button>
-              <button style={{ background: '#eee', color: '#1976d2', border: 'none', borderRadius: 8, padding: '8px 22px', fontWeight: 700, fontSize: 16, cursor: 'pointer' }} onClick={handleCloseFacture}>Fermer</button>
+            <div style={{ marginTop: 16, textAlign: 'right' }}>
+              <button type="button" className="btn btn-primary" onClick={() => window.print()}>
+                Imprimer
+              </button>
             </div>
           </div>
         </div>
       )}
     </div>
   );
-} 
+}

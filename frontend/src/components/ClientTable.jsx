@@ -1,47 +1,64 @@
 import React from 'react';
 
-export default function ClientTable({ clients, onSelect, onChangeSegment, loading, error, input, btn, segments }) {
+export default function ClientTable({ clients, onSelect, onChangeSegment, loading, error, segments }) {
   return (
-    <section style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' }}>
-      <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Clients</h2>
-      {error && <div style={{ color: '#e53935', marginBottom: 12 }}>{error}</div>}
+    <section className="surface" style={{ padding: '1.35rem', margin: '1.25rem 0' }}>
+      <h2 style={{ margin: '0 0 1rem', fontSize: '1.1rem' }}>Clients</h2>
+      {error && <div style={{ color: 'var(--color-danger)', marginBottom: 12 }}>{error}</div>}
       {loading ? (
-        <div style={{ textAlign: 'center', padding: 32 }}>
-          <span style={{ fontSize: 22, color: '#1976d2' }}>Chargement des clients...</span>
-        </div>
+        <p style={{ color: 'var(--color-muted)' }}>Chargement des clients…</p>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0, background: '#fff', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 12px #ececec' }}>
+        <div className="ae-table-wrap">
+          <table className="ae-table">
             <thead>
-              <tr style={{ background: '#e3f2fd' }}>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Nom</th>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Email</th>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Segment</th>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Commandes</th>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Inscription</th>
-                <th style={{ padding: 12, fontWeight: 800, color: '#1976d2', fontSize: 16 }}>Actions</th>
+              <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Segment</th>
+                <th>Commandes</th>
+                <th>Inscription</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {clients && clients.map((client, idx) => (
-                <tr key={client.id} style={idx % 2 === 1 ? { background: '#f8fafc' } : {}}>
-                  <td style={{ padding: 10 }}>{client.name}</td>
+              {clients?.map((client) => (
+                <tr key={client.id}>
+                  <td>{client.name}</td>
                   <td>{client.email}</td>
                   <td>
-                    <select value={client.segment} onChange={e => onChangeSegment(client.id, e.target.value)} style={input}>
-                      {segments.map(seg => <option key={seg} value={seg}>{seg}</option>)}
+                    <select
+                      className="input"
+                      value={client.segment}
+                      onChange={(e) => onChangeSegment(client.id, e.target.value)}
+                      style={{ minWidth: 120 }}
+                    >
+                      {segments.map((seg) => (
+                        <option key={seg} value={seg}>
+                          {seg}
+                        </option>
+                      ))}
                     </select>
                   </td>
                   <td>{client.orders}</td>
                   <td>{client.registered}</td>
-                  <td><button style={btn} onClick={() => onSelect(client)}>Voir historique</button></td>
+                  <td>
+                    <button type="button" className="btn btn-outline" style={{ padding: '6px 12px' }} onClick={() => onSelect(client)}>
+                      Historique
+                    </button>
+                  </td>
                 </tr>
               ))}
-              {clients && clients.length === 0 && !loading && <tr><td colSpan={6} style={{ color: '#888', textAlign: 'center', padding: 24 }}>Aucun client</td></tr>}
+              {clients?.length === 0 && !loading && (
+                <tr>
+                  <td colSpan={6} style={{ color: 'var(--color-muted)', textAlign: 'center' }}>
+                    Aucun client
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       )}
     </section>
   );
-} 
+}

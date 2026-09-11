@@ -1,29 +1,22 @@
 import React from 'react';
-import logo from '../shop.png';
 import { FaShoppingCart } from 'react-icons/fa';
 
-const headerStyle = {
-  height: 64,
-  background: '#fff',
-  borderBottom: '1px solid #eee',
-  display: 'flex',
-  alignItems: 'center',
-  paddingLeft: 240, // pour laisser la place à la sidebar
-  paddingRight: 32,
-  position: 'sticky',
-  top: 0,
-  zIndex: 99,
-};
-
 export default function Header({ onCartClick, cartCount }) {
+  const role = localStorage.getItem('role');
+  const showCart = role !== 'admin';
 
   return (
-    <header style={headerStyle}>
-      <img src={logo} alt="logo" style={{ height: 60 }} />
-      <span style={{ fontWeight: 'bold', fontSize: 22, color: '#222' }}>MiniShop</span>
+    <header className="ae-header">
+      <div className="ae-header-brand">
+        Atelier <em>Épure</em>
+      </div>
       <div style={{ flex: 1 }} />
-      {/* Icône panier supprimée */}
-      {/* Espace utilisateur ou notifications ici plus tard */}
+      {showCart && (
+        <button type="button" className="ae-cart-btn" onClick={onCartClick} aria-label="Ouvrir le panier">
+          <FaShoppingCart size={16} />
+          {cartCount > 0 && <span className="ae-cart-count">{cartCount}</span>}
+        </button>
+      )}
     </header>
   );
-} 
+}

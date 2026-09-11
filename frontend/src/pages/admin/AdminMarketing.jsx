@@ -59,84 +59,74 @@ export default function AdminMarketing() {
     localStorage.setItem('banners', JSON.stringify(updated));
   };
 
-  // Styles
-  const section = { background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' };
-  const btn = { background: 'linear-gradient(90deg, #1976d2 0%, #64b5f6 100%)', color: '#fff', border: 'none', borderRadius: 16, padding: '8px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', margin: '0 8px', boxShadow: '0 2px 8px #e0e0e0', transition: 'background 0.2s' };
-  const input = { border: '1px solid #bbb', borderRadius: 8, padding: '10px 14px', fontSize: 16, outline: 'none', margin: '0 8px 12px 0', background: '#f8fafc' };
-
   return (
-    <div style={{ padding: '2.5rem 0', maxWidth: 1200, margin: '0 auto', background: 'linear-gradient(120deg, #f8fafc 0%, #e3f2fd 100%)', minHeight: '100vh', fontFamily: 'Inter, Roboto, Arial, sans-serif' }}>
-      <h1 style={{ fontSize: 36, fontWeight: 900, color: '#1976d2', marginBottom: 36, letterSpacing: 1, textAlign: 'center' }}>Marketing & Promotions</h1>
+    <div className="ae-page" style={{ maxWidth: 1000, margin: '0 auto' }}>
+      <h1 className="ae-page-title">Marketing</h1>
+      <p className="ae-page-sub">Promotions et campagnes Atelier Épure</p>
       {/* Codes promo */}
-      <section style={section}>
-        <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Codes promo</h2>
-        <div style={{ marginBottom: 12 }}>
-          <input style={input} placeholder="Code" value={promoForm.code} onChange={e => setPromoForm(f => ({ ...f, code: e.target.value }))} />
-          <select style={input} value={promoForm.type} onChange={e => setPromoForm(f => ({ ...f, type: e.target.value }))}>
+      <section className="surface" style={{ padding: '1.35rem', marginBottom: '1.25rem' }}>
+        <h2 style={{ margin: '0 0 1rem', fontSize: '1.1rem' }}>Codes promo</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+          <input className="input" style={{ width: 120 }} placeholder="Code" value={promoForm.code} onChange={e => setPromoForm(f => ({ ...f, code: e.target.value }))} />
+          <select className="input" style={{ width: 150 }} value={promoForm.type} onChange={e => setPromoForm(f => ({ ...f, type: e.target.value }))}>
             <option value="pourcentage">% réduction</option>
             <option value="montant">Montant fixe (€)</option>
           </select>
-          <input style={input} type="number" placeholder="Valeur" value={promoForm.value} onChange={e => setPromoForm(f => ({ ...f, value: e.target.value }))} />
-          <input style={input} type="date" value={promoForm.validUntil} onChange={e => setPromoForm(f => ({ ...f, validUntil: e.target.value }))} />
-          <button style={btn} onClick={addPromo}>Ajouter</button>
+          <input className="input" style={{ width: 100 }} type="number" placeholder="Valeur" value={promoForm.value} onChange={e => setPromoForm(f => ({ ...f, value: e.target.value }))} />
+          <input className="input" style={{ width: 150 }} type="date" value={promoForm.validUntil} onChange={e => setPromoForm(f => ({ ...f, validUntil: e.target.value }))} />
+          <button type="button" className="btn btn-primary" onClick={addPromo}>Ajouter</button>
         </div>
-        <ul style={{ paddingLeft: 0 }}>
+        <ul style={{ paddingLeft: 0, margin: 0 }}>
           {promos.map(p => (
-            <li key={p.id} style={{ marginBottom: 6, listStyle: 'none' }}>
-              <b>{p.code}</b> - {p.type === 'pourcentage' ? p.value + '%' : p.value + '€'} {p.validUntil && <span>(jusqu'au {p.validUntil})</span>}
-              <button style={{ ...btn, background: '#eee', color: '#e53935' }} onClick={() => removePromo(p.id)}>Supprimer</button>
+            <li key={p.id} style={{ marginBottom: 8, listStyle: 'none', display: 'flex', gap: 10, alignItems: 'center' }}>
+              <b>{p.code}</b> — {p.type === 'pourcentage' ? p.value + '%' : p.value + '€'} {p.validUntil && <span>(jusqu&apos;au {p.validUntil})</span>}
+              <button type="button" className="btn btn-danger" style={{ padding: '4px 10px' }} onClick={() => removePromo(p.id)}>Supprimer</button>
             </li>
           ))}
-          {promos.length === 0 && <li style={{ color: '#888', listStyle: 'none' }}>Aucun code promo</li>}
+          {promos.length === 0 && <li style={{ color: 'var(--color-muted)', listStyle: 'none' }}>Aucun code promo</li>}
         </ul>
       </section>
-      {/* Campagnes email */}
-      <section style={section}>
-        <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Campagnes email</h2>
-        <div style={{ marginBottom: 12 }}>
-          <input style={input} placeholder="Sujet" value={campForm.subject} onChange={e => setCampForm(f => ({ ...f, subject: e.target.value }))} />
-          <input style={input} placeholder="Segment (optionnel)" value={campForm.segment} onChange={e => setCampForm(f => ({ ...f, segment: e.target.value }))} />
-          <textarea style={{ ...input, minHeight: 60, width: 300 }} placeholder="Contenu" value={campForm.content} onChange={e => setCampForm(f => ({ ...f, content: e.target.value }))} />
-          <button style={btn} onClick={addCampaign}>Créer campagne</button>
+      <section className="surface" style={{ padding: '1.35rem', marginBottom: '1.25rem' }}>
+        <h2 style={{ margin: '0 0 1rem', fontSize: '1.1rem' }}>Campagnes email</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+          <input className="input" style={{ flex: '1 1 160px' }} placeholder="Sujet" value={campForm.subject} onChange={e => setCampForm(f => ({ ...f, subject: e.target.value }))} />
+          <input className="input" style={{ flex: '1 1 140px' }} placeholder="Segment" value={campForm.segment} onChange={e => setCampForm(f => ({ ...f, segment: e.target.value }))} />
+          <textarea className="input" style={{ flex: '1 1 100%', minHeight: 72 }} placeholder="Contenu" value={campForm.content} onChange={e => setCampForm(f => ({ ...f, content: e.target.value }))} />
+          <button type="button" className="btn btn-primary" onClick={addCampaign}>Créer campagne</button>
         </div>
-        <ul style={{ paddingLeft: 0 }}>
+        <ul style={{ paddingLeft: 0, margin: 0 }}>
           {campaigns.map(c => (
             <li key={c.id} style={{ marginBottom: 10, listStyle: 'none' }}>
               <b>{c.subject}</b> {c.segment && <span>(segment : {c.segment})</span>}
-              <div style={{ fontSize: 15, color: '#555', margin: '4px 0' }}>{c.content}</div>
+              <div style={{ fontSize: 14, color: 'var(--color-muted)', margin: '4px 0' }}>{c.content}</div>
             </li>
           ))}
-          {campaigns.length === 0 && <li style={{ color: '#888', listStyle: 'none' }}>Aucune campagne</li>}
+          {campaigns.length === 0 && <li style={{ color: 'var(--color-muted)', listStyle: 'none' }}>Aucune campagne</li>}
         </ul>
       </section>
-      {/* Fidélité */}
-      <section style={section}>
-        <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Programme de fidélité</h2>
-        <div style={{ fontSize: 18, marginBottom: 8 }}>Points actuels : <b>{loyalty.points}</b></div>
-        <div style={{ fontSize: 18, marginBottom: 8 }}>Niveau : <b>{loyalty.level}</b></div>
-        <div style={{ color: '#888', fontSize: 15 }}>Pour la démo, le programme est simulé.</div>
+      <section className="surface" style={{ padding: '1.35rem', marginBottom: '1.25rem' }}>
+        <h2 style={{ margin: '0 0 1rem', fontSize: '1.1rem' }}>Fidélité</h2>
+        <div>Points : <b>{loyalty.points}</b> — Niveau : <b>{loyalty.level}</b></div>
+        <p style={{ color: 'var(--color-muted)', fontSize: 14 }}>Simulation pour la démo.</p>
       </section>
-      {/* Bannières */}
-      <section style={section}>
-        <h2 style={{ fontSize: 26, color: '#1976d2', fontWeight: 800, marginBottom: 18 }}>Bannières publicitaires</h2>
-        <div style={{ marginBottom: 12 }}>
-          <input style={input} placeholder="Image URL" value={bannerForm.image} onChange={e => setBannerForm(f => ({ ...f, image: e.target.value }))} />
-          <input style={input} placeholder="Lien (optionnel)" value={bannerForm.link} onChange={e => setBannerForm(f => ({ ...f, link: e.target.value }))} />
-          <input style={input} type="date" value={bannerForm.start} onChange={e => setBannerForm(f => ({ ...f, start: e.target.value }))} />
-          <input style={input} type="date" value={bannerForm.end} onChange={e => setBannerForm(f => ({ ...f, end: e.target.value }))} />
-          <button style={btn} onClick={addBanner}>Ajouter</button>
+      <section className="surface" style={{ padding: '1.35rem' }}>
+        <h2 style={{ margin: '0 0 1rem', fontSize: '1.1rem' }}>Bannières</h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+          <input className="input" style={{ flex: '1 1 160px' }} placeholder="Image URL" value={bannerForm.image} onChange={e => setBannerForm(f => ({ ...f, image: e.target.value }))} />
+          <input className="input" style={{ flex: '1 1 140px' }} placeholder="Lien" value={bannerForm.link} onChange={e => setBannerForm(f => ({ ...f, link: e.target.value }))} />
+          <input className="input" style={{ width: 140 }} type="date" value={bannerForm.start} onChange={e => setBannerForm(f => ({ ...f, start: e.target.value }))} />
+          <input className="input" style={{ width: 140 }} type="date" value={bannerForm.end} onChange={e => setBannerForm(f => ({ ...f, end: e.target.value }))} />
+          <button type="button" className="btn btn-primary" onClick={addBanner}>Ajouter</button>
         </div>
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
           {banners.map(b => (
-            <div key={b.id} style={{ background: '#f8fafc', borderRadius: 12, boxShadow: '0 2px 8px #e0e0e0', padding: 16, minWidth: 220 }}>
-              {b.image && <img src={b.image} alt="bannière" style={{ width: 180, borderRadius: 8, marginBottom: 8 }} />}
-              {b.link && <div style={{ fontSize: 14, color: '#1976d2' }}>Lien : {b.link}</div>}
-              {b.start && <div style={{ fontSize: 13, color: '#888' }}>Début : {b.start}</div>}
-              {b.end && <div style={{ fontSize: 13, color: '#888' }}>Fin : {b.end}</div>}
-              <button style={{ ...btn, background: '#eee', color: '#e53935', marginTop: 8 }} onClick={() => removeBanner(b.id)}>Supprimer</button>
+            <div key={b.id} className="surface" style={{ padding: 14, minWidth: 200 }}>
+              {b.image && <img src={b.image} alt="bannière" style={{ width: 160, borderRadius: 8, marginBottom: 8 }} />}
+              {b.link && <div style={{ fontSize: 13 }}>Lien : {b.link}</div>}
+              <button type="button" className="btn btn-danger" style={{ marginTop: 8, padding: '4px 10px' }} onClick={() => removeBanner(b.id)}>Supprimer</button>
             </div>
           ))}
-          {banners.length === 0 && <span style={{ color: '#888' }}>Aucune bannière</span>}
+          {banners.length === 0 && <span style={{ color: 'var(--color-muted)' }}>Aucune bannière</span>}
         </div>
       </section>
     </div>
