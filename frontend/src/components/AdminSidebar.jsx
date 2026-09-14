@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
-import { NavLink, useNavigate, Link } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
   MdDashboard,
   MdInventory2,
   MdPeople,
   MdListAlt,
   MdBarChart,
-  MdStorefront,
   MdAccountBalance,
   MdLogout,
 } from 'react-icons/md';
@@ -65,11 +64,6 @@ export default function AdminSidebar() {
       ))}
 
       <div style={{ flex: 1 }} />
-
-      <Link to="/home" className="ae-nav-link ae-nav-link--shop">
-        <MdStorefront size={20} />
-        <span className="label">Retour boutique</span>
-      </Link>
 
       <div className="ae-console-profile">
         <div className="ae-console-avatar" aria-hidden>
