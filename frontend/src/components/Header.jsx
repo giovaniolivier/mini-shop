@@ -7,8 +7,8 @@ import { getProducts } from '../services/productsApi';
 
 const shopLinks = [
   { to: '/home', label: 'Catalogue' },
-  { to: '/home', label: 'Nouveautés', hash: 'new' },
-  { to: '/home', label: 'Collections', hash: 'collections' },
+  { to: '/artisanat', label: 'Artisanat d’Art' },
+  { to: '/collections', label: 'Collections' },
   { to: '/collection-privee', label: 'Collection Privée' },
 ];
 

@@ -111,9 +111,14 @@
 }
 
 .ae-shop-nav a:hover,
-.ae-shop-nav a.active,
 .ae-shop-nav-link:hover {
   color: #121417;
+}
+
+.ae-shop-nav a.active {
+  color: #121417;
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
 }
 
 .ae-shop-search {
