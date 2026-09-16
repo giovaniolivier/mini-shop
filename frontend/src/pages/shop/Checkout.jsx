@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as cartApi from '../../services/cartApi';
 import { createOrder } from '../../services/ordersApi';
@@ -162,7 +162,7 @@ export default function Checkout() {
                   <img
                     src={item.Product?.image_url}
                     alt={item.Product?.name}
-                    style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 10, background: '#ebe9e4' }}
+                    style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8, background: '#ebe9e4' }}
                   />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 600 }}>{item.Product?.name}</div>

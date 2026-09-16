@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+﻿import React, { useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import AdminSidebar from '../components/AdminSidebar';
-import ClientSidebar from '../components/ClientSidebar';
 import Header from '../components/Header';
+import ShopFooter from '../components/ShopFooter';
+import '../styles/shop.css';
 
 export default function AppLayout({
   children,
@@ -31,20 +32,25 @@ export default function AppLayout({
   }, [cartOpen, setCartOpen]);
 
   const hideLayout = ['/login', '/register', '/'].includes(location.pathname);
-  const role = localStorage.getItem('role');
+  const isAdmin = localStorage.getItem('role') === 'admin';
+  const isAdminSurface = location.pathname.startsWith('/admin');
+  // Console admin uniquement — jamais de sidebar sur le parcours client / boutique
+  const showSidebar = !hideLayout && isAdmin && isAdminSurface;
+  const shopChrome = !hideLayout && !isAdminSurface;
 
   return (
-    <div>
-      {!hideLayout && (role === 'admin' ? <AdminSidebar /> : <ClientSidebar />)}
+    <div className={shopChrome ? 'ae-shop-root' : undefined}>
+      {showSidebar && <AdminSidebar />}
       {!hideLayout && <Header onCartClick={handleOpenCart} cartCount={cartCount} />}
       <div
         style={{
-          marginLeft: !hideLayout ? 'var(--sidebar-width)' : 0,
+          marginLeft: showSidebar ? 'var(--sidebar-width)' : 0,
           minHeight: '100vh',
-          padding: !hideLayout ? '1.5rem 1.75rem 2.5rem' : 0,
+          padding: hideLayout || shopChrome ? 0 : '1.5rem 1.75rem 2.5rem',
         }}
       >
         {children}
+        {shopChrome && <ShopFooter />}
       </div>
       {cartOpen && (
         <div ref={miniCartRef} className="ae-minicart">
@@ -87,7 +93,7 @@ export default function AppLayout({
                           width: 56,
                           height: 56,
                           objectFit: 'cover',
-                          borderRadius: 10,
+                          borderRadius: 8,
                           background: '#ebe9e4',
                         }}
                       />

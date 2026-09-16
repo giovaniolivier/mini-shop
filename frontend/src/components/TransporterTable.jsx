@@ -1,8 +1,8 @@
-import React from 'react';
+﻿import React from 'react';
 
 export default function TransporterTable({ transporteurs, newTransport, setNewTransport, onAdd, onDelete, loading, error, input, btn }) {
   return (
-    <section style={{ background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' }}>
+    <section style={{ background: '#fff', borderRadius: 8, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' }}>
       <h2 style={{ fontSize: 26, color: 'var(--color-primary)', fontWeight: 800, marginBottom: 18 }}>Transporteurs</h2>
       {error && <div style={{ color: '#e53935', marginBottom: 12 }}>{error}</div>}
       {loading ? (

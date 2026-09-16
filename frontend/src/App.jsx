@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Home from './pages/shop/Home';
+import CollectionPrivee from './pages/shop/CollectionPrivee';
 import PrivateRoute from './components/PrivateRoute';
 import ProductDetail from './pages/shop/ProductDetail';
 import Checkout from './pages/shop/Checkout';
@@ -70,6 +71,10 @@ function AppRoutes({
               updateCartItem={updateCartItem}
             />
           }
+        />
+        <Route
+          path="/collection-privee"
+          element={<CollectionPrivee addToCart={addToCart} />}
         />
         <Route
           path="/dashboard"

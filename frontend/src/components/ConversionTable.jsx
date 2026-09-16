@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 export default function ConversionTable({ conversionCanaux, loading, error }) {
   if (loading) {
@@ -8,7 +8,7 @@ export default function ConversionTable({ conversionCanaux, loading, error }) {
     return <div style={{ color: '#e53935', marginBottom: 12 }}>{error}</div>;
   }
   return (
-    <table style={{ width: '100%', background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px #e0e0e0', margin: '18px 0', borderCollapse: 'collapse' }}>
+    <table style={{ width: '100%', background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px #e0e0e0', margin: '18px 0', borderCollapse: 'collapse' }}>
       <thead>
         <tr style={{ background: '#ebe9e4' }}>
           <th style={{ padding: 10, textAlign: 'left' }}>Canal</th>

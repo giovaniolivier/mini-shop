@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getClientOrders } from '../../services/ordersApi';
 import { formatDate } from '../../utils/format';
@@ -34,7 +34,7 @@ export default function ClientDashboard() {
           style={{
             width: 56,
             height: 56,
-            borderRadius: 14,
+            borderRadius: 8,
             background: 'var(--color-primary)',
             color: '#fff',
             display: 'flex',
