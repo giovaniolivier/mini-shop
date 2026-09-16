@@ -3,6 +3,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Home from './pages/shop/Home';
 import CollectionPrivee from './pages/shop/CollectionPrivee';
+import ArtisanatArt from './pages/shop/ArtisanatArt';
 import PrivateRoute from './components/PrivateRoute';
 import ProductDetail from './pages/shop/ProductDetail';
 import Checkout from './pages/shop/Checkout';
@@ -76,6 +77,7 @@ function AppRoutes({
           path="/collection-privee"
           element={<CollectionPrivee addToCart={addToCart} />}
         />
+        <Route path="/artisanat" element={<ArtisanatArt />} />
         <Route
           path="/dashboard"
           element={
