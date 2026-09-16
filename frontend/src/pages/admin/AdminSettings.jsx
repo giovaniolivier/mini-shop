@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import useFetchSettings from '../../hooks/useFetchSettings';
 import TransporterTable from '../../components/TransporterTable';
 
@@ -16,10 +16,10 @@ export default function AdminSettings() {
   const [localError, setLocalError] = useState(null);
 
   // UI
-  const section = { background: '#fff', borderRadius: 18, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' };
+  const section = { background: '#fff', borderRadius: 8, boxShadow: '0 4px 24px #e0e0e0', padding: 32, margin: '32px 0' };
   const label = { fontWeight: 600, marginRight: 12 };
   const input = { border: '1px solid #bbb', borderRadius: 8, padding: '10px 14px', fontSize: 16, outline: 'none', margin: '0 8px 12px 0', background: '#f8fafc' };
-  const btn = { background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 16, padding: '8px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', margin: '0 8px', boxShadow: '0 2px 8px #e0e0e0', transition: 'background 0.2s' };
+  const btn = { background: 'var(--color-primary)', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', margin: '0 8px', boxShadow: '0 2px 8px #e0e0e0', transition: 'background 0.2s' };
 
   if (loading || !settings) {
     return <div style={{ textAlign: 'center', padding: 64 }}><span style={{ fontSize: 24, color: 'var(--color-primary)' }}>Chargement de la configuration...</span></div>;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   MdDownload,
@@ -456,7 +456,7 @@ export default function AdminDashboard() {
           style={{
             marginBottom: '0.85rem',
             padding: '0.55rem 0.85rem',
-            borderRadius: 10,
+            borderRadius: 8,
             background: '#f6f4ef',
             border: '1px solid #e6d9c6',
             fontSize: '0.75rem',
@@ -561,7 +561,7 @@ export default function AdminDashboard() {
                       name === 'realised' ? 'Réalisé' : 'Prévision',
                     ]}
                     contentStyle={{
-                      borderRadius: 10,
+                      borderRadius: 8,
                       border: 'none',
                       background: '#121417',
                       color: '#fff',

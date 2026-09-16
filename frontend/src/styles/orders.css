@@ -1,4 +1,4 @@
-/* Commandes & Logistique — maquette */
+﻿/* Commandes & Logistique — maquette */
 .ae-ord {
   max-width: 1280px;
   margin: 0 auto;
@@ -58,7 +58,7 @@
   padding: 0 0.95rem;
   border: 1px solid #e4e2dd;
   background: #fff;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
@@ -104,7 +104,7 @@
   font-size: 0.75rem;
   background: #f3f2ef;
   padding: 0.1rem 0.35rem;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 .ae-ord-form {
@@ -137,7 +137,7 @@
   align-items: end;
   padding: 0.75rem;
   border: 1px solid #ebeae6;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #fafaf8;
 }
 
@@ -163,7 +163,7 @@
   width: 40px;
   height: 42px;
   border: 1px solid #e4e2dd;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #fff;
   color: #a13d3d;
   display: inline-flex;
@@ -195,7 +195,7 @@
 .ae-ord-demo {
   margin-bottom: 0.85rem;
   padding: 0.55rem 0.85rem;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #f6f4ef;
   border: 1px solid #e6d9c6;
   font-size: 0.75rem;
@@ -205,7 +205,7 @@
 .ae-ord-error {
   background: #f8ecec;
   color: #a13d3d;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 0.7rem 0.9rem;
   margin-bottom: 1rem;
   font-size: 0.85rem;
@@ -214,7 +214,7 @@
 .ae-ord-toast {
   background: #e8f5ee;
   color: #1f6b45;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 0.7rem 0.9rem;
   margin-bottom: 1rem;
   font-size: 0.85rem;
@@ -231,7 +231,7 @@
   position: relative;
   background: #fff;
   border: 1px solid #ebeae6;
-  border-radius: 14px;
+  border-radius: 8px;
   padding: 1.05rem 1.15rem 1.05rem;
   box-shadow: 0 4px 18px rgba(18, 20, 23, 0.04);
   min-height: 118px;
@@ -245,7 +245,7 @@
   right: 0.95rem;
   width: 34px;
   height: 34px;
-  border-radius: 10px;
+  border-radius: 8px;
   background: #f3f2ef;
   color: #8a8d93;
   display: flex;
@@ -337,7 +337,7 @@
 .ae-ord-panel {
   background: #fff;
   border: 1px solid #ebeae6;
-  border-radius: 16px;
+  border-radius: 8px;
   padding: 0.35rem 1.15rem 1.1rem;
   box-shadow: 0 4px 18px rgba(18, 20, 23, 0.04);
 }
@@ -390,7 +390,7 @@
   bottom: -1px;
   height: 2px;
   background: #121417;
-  border-radius: 2px 2px 0 0;
+  border-radius: 8px 8px 0 0;
 }
 
 .ae-ord-filters {
@@ -412,7 +412,7 @@
   padding: 0 0.85rem;
   background: #fff;
   border: 1px solid #e4e2dd;
-  border-radius: 10px;
+  border-radius: 8px;
   color: #9a9da3;
   box-sizing: border-box;
 }
@@ -437,7 +437,7 @@
   height: 40px;
   border: 1px solid #e4e2dd;
   background: #fff;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 0 0.75rem;
   font-size: 0.8rem;
   font-family: inherit;
@@ -534,7 +534,7 @@
 .ae-ord-badge {
   display: inline-flex;
   align-items: center;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 0.12rem 0.4rem;
   font-size: 0.62rem;
   font-weight: 700;
@@ -661,7 +661,7 @@
   padding: 0.85rem 1.15rem;
   background: #f5f5f4;
   border-top: 1px solid #ebeae6;
-  border-radius: 0 0 16px 16px;
+  border-radius: 0 0 8px 8px;
 }
 
 .ae-ord-pager-info {
@@ -945,7 +945,7 @@
 .ae-ord-modal-alert {
   margin-bottom: 1.15rem;
   padding: 0.85rem 0.95rem;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #fbf5ea;
   border: 1px solid #efd7b8;
 }

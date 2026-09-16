@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+﻿import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   MdDownload,
   MdPercent,
@@ -286,7 +286,7 @@ export default function AdminAnalytics() {
                 <YAxis yAxisId="right" orientation="right" tick={{ fill: '#9a9da3', fontSize: 11 }} axisLine={false} tickLine={false} width={36} />
                 <Tooltip
                   contentStyle={{
-                    borderRadius: 10,
+                    borderRadius: 8,
                     border: '1px solid #ebeae6',
                     fontSize: 12,
                   }}

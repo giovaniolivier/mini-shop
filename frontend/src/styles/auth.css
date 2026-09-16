@@ -1,4 +1,4 @@
-/* Épure Studio — login card (maquette fond clair) */
+﻿/* Épure Studio — login card (maquette fond clair) */
 .ae-login-screen {
   min-height: 100vh;
   display: flex;
@@ -13,7 +13,7 @@
   width: 100%;
   max-width: 420px;
   background: #ffffff;
-  border-radius: 14px;
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 10px 36px rgba(18, 20, 23, 0.07);
   border: 1px solid #ebebea;
@@ -63,7 +63,7 @@
   gap: 0;
   background: #efeeeb;
   padding: 3px;
-  border-radius: 10px;
+  border-radius: 8px;
   margin-bottom: 0.55rem;
 }
 
@@ -111,7 +111,7 @@
   margin-bottom: 1.1rem;
   padding: 0.5rem 0.7rem;
   background: #f6f4ef;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .ae-role-meta .left {
@@ -340,7 +340,7 @@
 
 .ae-trust-box {
   background: #f3f2ef;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 0.5rem 0.55rem;
   font-size: 0.62rem;
   font-weight: 600;
@@ -456,7 +456,7 @@
 
 .ae-modal {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 8px;
   padding: 1.5rem;
   width: 100%;
   max-width: 400px;
@@ -494,7 +494,7 @@
   height: 3px;
   margin: -2rem -1.65rem 1.35rem;
   background: linear-gradient(90deg, #b88e5f 0%, #1a1a1a 100%);
-  border-radius: 14px 14px 0 0;
+  border-radius: 8px 8px 0 0;
 }
 
 .ae-success-icon {
@@ -633,7 +633,7 @@
 
 .ae-armor-bar span {
   height: 4px;
-  border-radius: 2px;
+  border-radius: 8px;
   background: #e6e4df;
 }
 

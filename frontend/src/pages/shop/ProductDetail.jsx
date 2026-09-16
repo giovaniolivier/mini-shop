@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProducts } from '../../services/productsApi';
 
@@ -50,12 +50,12 @@ export default function ProductDetail({ onAddToCart, openCart }) {
               width: '100%',
               aspectRatio: '1',
               objectFit: 'cover',
-              borderRadius: 'var(--radius-md)',
+              borderRadius: 8,
               background: '#ebe9e4',
             }}
           />
         ) : (
-          <div style={{ aspectRatio: '1', borderRadius: 'var(--radius-md)', background: '#ebe9e4' }} />
+          <div style={{ aspectRatio: '1', borderRadius: 8, background: '#ebe9e4' }} />
         )}
         <div>
           {product.category && <span className="ae-badge">{product.category}</span>}

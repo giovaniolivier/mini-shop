@@ -1,22 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
 import { MdNotificationsNone, MdSearch, MdSettings } from 'react-icons/md';
 import BrandLogo from './BrandLogo';
 import { getProducts } from '../services/productsApi';
 
+const shopLinks = [
+  { to: '/home', label: 'Catalogue' },
+  { to: '/home', label: 'Nouveautés', hash: 'new' },
+  { to: '/home', label: 'Collections', hash: 'collections' },
+  { to: '/collection-privee', label: 'Collection Privée' },
+];
+
 export default function Header({ onCartClick, cartCount }) {
   const role = localStorage.getItem('role');
-  const showCart = role !== 'admin';
   const isAdmin = role === 'admin';
+  const location = useLocation();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
   const [alertsOpen, setAlertsOpen] = useState(false);
   const [lowStock, setLowStock] = useState([]);
   const alertsRef = useRef(null);
 
+  const isAdminSurface = location.pathname.startsWith('/admin');
+
   useEffect(() => {
-    if (!isAdmin) return undefined;
+    if (!isAdmin || !isAdminSurface) return undefined;
     let cancelled = false;
     getProducts()
       .then((res) => {
@@ -33,7 +42,7 @@ export default function Header({ onCartClick, cartCount }) {
     return () => {
       cancelled = true;
     };
-  }, [isAdmin]);
+  }, [isAdmin, isAdminSurface]);
 
   useEffect(() => {
     if (!alertsOpen) return undefined;
@@ -46,7 +55,7 @@ export default function Header({ onCartClick, cartCount }) {
     return () => document.removeEventListener('mousedown', onDoc);
   }, [alertsOpen]);
 
-  const submitSearch = (e) => {
+  const submitAdminSearch = (e) => {
     e.preventDefault();
     const q = query.trim();
     if (!q) return;
@@ -57,6 +66,68 @@ export default function Header({ onCartClick, cartCount }) {
     }
   };
 
+  const submitShopSearch = (e) => {
+    e.preventDefault();
+    const q = query.trim();
+    if (!q) return;
+    navigate(`/home?q=${encodeURIComponent(q)}`);
+  };
+
+  // Header boutique sans sidebar hors console admin
+  if (!isAdminSurface) {
+    return (
+      <header className="ae-shop-header">
+        <Link to="/home" className="ae-shop-brand" aria-label="Épure Studio — Accueil">
+          <BrandLogo variant="shop" />
+        </Link>
+
+        <nav className="ae-shop-nav" aria-label="Boutique">
+          {shopLinks.map((l) => (
+            <Link
+              key={l.label}
+              to={l.to}
+              className={location.pathname === l.to ? 'active' : undefined}
+            >
+              {l.label}
+            </Link>
+          ))}
+          <button type="button" className="ae-shop-nav-link" onClick={onCartClick}>
+            Panier
+          </button>
+        </nav>
+
+        <form className="ae-shop-search" onSubmit={submitShopSearch}>
+          <MdSearch size={18} aria-hidden />
+          <input
+            type="search"
+            placeholder="Rechercher…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            aria-label="Recherche boutique"
+          />
+        </form>
+
+        <div className="ae-shop-header-actions">
+          <button type="button" className="ae-shop-icon-btn" onClick={onCartClick} aria-label="Ouvrir le panier">
+            <FaShoppingCart size={15} />
+            {cartCount > 0 && <span className="ae-shop-cart-badge">{cartCount}</span>}
+          </button>
+          <button
+            type="button"
+            className="ae-shop-avatar"
+            aria-label="Profil"
+            onClick={() => navigate(role ? '/profile' : '/login')}
+          >
+            {(localStorage.getItem('user')
+              ? JSON.parse(localStorage.getItem('user') || '{}').firstName?.[0] || 'C'
+              : 'C'
+            ).toUpperCase()}
+          </button>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className={`ae-header${isAdmin ? ' ae-header--admin' : ''}`}>
       {!isAdmin && (
@@ -66,7 +137,7 @@ export default function Header({ onCartClick, cartCount }) {
       )}
 
       {isAdmin && (
-        <form className="ae-admin-search" onSubmit={submitSearch}>
+        <form className="ae-admin-search" onSubmit={submitAdminSearch}>
           <MdSearch size={18} aria-hidden />
           <input
             type="search"
@@ -133,13 +204,6 @@ export default function Header({ onCartClick, cartCount }) {
             </div>
           )}
         </div>
-      )}
-
-      {showCart && (
-        <button type="button" className="ae-cart-btn" onClick={onCartClick} aria-label="Ouvrir le panier">
-          <FaShoppingCart size={16} />
-          {cartCount > 0 && <span className="ae-cart-count">{cartCount}</span>}
-        </button>
       )}
     </header>
   );

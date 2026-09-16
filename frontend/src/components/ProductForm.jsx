@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 export default function ProductForm({
   form,
@@ -39,7 +39,7 @@ export default function ProductForm({
         <div
           style={{
             border: dragActive ? '2px solid var(--color-secondary)' : '2px dashed var(--color-border)',
-            borderRadius: 'var(--radius-sm)',
+            borderRadius: 8,
             padding: '8px 12px',
             textAlign: 'center',
             background: dragActive ? 'rgba(184,115,51,0.08)' : 'var(--color-neutral)',
