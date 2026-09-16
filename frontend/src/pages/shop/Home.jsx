@@ -528,7 +528,7 @@ export default function Home({ cart, addToCart, setCartOpen }) {
         <button
           type="button"
           className="ae-shop-float-cart"
-          onClick={() => setCartOpen?.(true)}
+          onClick={() => navigate('/panier')}
         >
           <FaShoppingBag size={14} aria-hidden />
           <span>Panier en cours</span>

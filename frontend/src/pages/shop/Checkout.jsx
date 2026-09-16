@@ -467,7 +467,7 @@ export default function Checkout({
                   <button
                     type="button"
                     className="ae-chk-edit"
-                    onClick={() => navigate('/home')}
+                    onClick={() => navigate('/panier')}
                   >
                     Modifier
                   </button>

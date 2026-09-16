@@ -91,9 +91,12 @@ export default function Header({ onCartClick, cartCount }) {
               {l.label}
             </Link>
           ))}
-          <button type="button" className="ae-shop-nav-link" onClick={onCartClick}>
+          <Link
+            to="/panier"
+            className={location.pathname === '/panier' ? 'ae-shop-nav-link active' : 'ae-shop-nav-link'}
+          >
             Panier
-          </button>
+          </Link>
         </nav>
 
         <form className="ae-shop-search" onSubmit={submitShopSearch}>
