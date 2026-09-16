@@ -115,7 +115,8 @@
   color: #121417;
 }
 
-.ae-shop-nav a.active {
+.ae-shop-nav a.active,
+.ae-shop-nav-link.active {
   color: #121417;
   text-decoration: underline;
   text-underline-offset: 0.35em;

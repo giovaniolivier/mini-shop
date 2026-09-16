@@ -8,6 +8,7 @@ import CollectionsSignatures from './pages/shop/CollectionsSignatures';
 import PrivateRoute from './components/PrivateRoute';
 import ProductDetail from './pages/shop/ProductDetail';
 import Checkout from './pages/shop/Checkout';
+import Cart from './pages/shop/Cart';
 import Profile from './pages/shop/Profile';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminProductNew from './pages/admin/AdminProductNew';
@@ -43,12 +44,17 @@ function AppRoutes({
     navigate('/checkout');
   };
 
+  const handleOpenCartPage = () => {
+    setCartOpen(false);
+    navigate('/panier');
+  };
+
   return (
     <AppLayout
       cart={cart}
       cartOpen={cartOpen}
       setCartOpen={setCartOpen}
-      handleOpenCart={handleOpenCart}
+      handleOpenCart={handleOpenCartPage}
       cartCount={cartCount}
       cartTotal={cartTotal}
       handleCheckout={handleCheckout}
@@ -90,7 +96,17 @@ function AppRoutes({
         />
         <Route
           path="/product/:id"
-          element={<ProductDetail onAddToCart={addToCart} openCart={() => setCartOpen(true)} />}
+          element={<ProductDetail onAddToCart={addToCart} openCart={() => navigate('/panier')} />}
+        />
+        <Route
+          path="/panier"
+          element={
+            <Cart
+              cart={cart}
+              updateCartItem={updateCartItem}
+              removeFromCart={removeFromCart}
+            />
+          }
         />
         <Route
           path="/checkout"
