@@ -1,0 +1,936 @@
+/* Checkout — Paiement & Expédition Sécurisés */
+
+.ae-chk {
+  background: #f7f6f3;
+  min-height: calc(100vh - 64px);
+}
+
+.ae-chk-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 1.35rem 1.25rem 2.5rem;
+}
+
+.ae-chk-toast {
+  position: fixed;
+  top: 5rem;
+  left: 50%;
+  z-index: 40;
+  transform: translateX(-50%);
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  background: #121417;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(18, 20, 23, 0.18);
+}
+
+.ae-chk-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1.35rem;
+  animation: ae-chk-fade 0.4s ease both;
+}
+
+.ae-chk-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #9a9da3;
+}
+
+.ae-chk-head h1 {
+  margin: 0;
+  max-width: 16ch;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: clamp(1.7rem, 3vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: #121417;
+}
+
+.ae-chk-steps {
+  list-style: none;
+  margin: 0.35rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 1rem;
+  align-items: center;
+}
+
+.ae-chk-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #b0b3b8;
+}
+
+.ae-chk-step-index {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ebe9e4;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+}
+
+.ae-chk-step.is-done {
+  color: #121417;
+}
+
+.ae-chk-step.is-done .ae-chk-step-index {
+  background: #121417;
+}
+
+.ae-chk-step.is-active {
+  color: #121417;
+  font-weight: 800;
+}
+
+.ae-chk-step.is-active .ae-chk-step-index {
+  background: #121417;
+  box-shadow: 0 0 0 3px rgba(166, 124, 82, 0.45);
+}
+
+.ae-chk-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(300px, 0.9fr);
+  gap: 1.15rem;
+  align-items: start;
+}
+
+.ae-chk-main {
+  display: grid;
+  gap: 0.95rem;
+}
+
+.ae-chk-card {
+  padding: 1.15rem 1.2rem 1.25rem;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #ebeae6;
+  animation: ae-chk-fade 0.45s ease both;
+}
+
+.ae-chk-card-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: start;
+  margin-bottom: 1rem;
+}
+
+.ae-chk-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #121417;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.ae-chk-num-soft {
+  background: #ebe9e4;
+  color: #5c5f66;
+}
+
+.ae-chk-ssl {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a5a2b;
+  white-space: nowrap;
+}
+
+.ae-chk-card-head h2 {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #121417;
+}
+
+.ae-chk-card-head p {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #7a7d83;
+}
+
+.ae-chk-badge {
+  padding: 0.28rem 0.55rem;
+  border-radius: 8px;
+  background: #efe4d4;
+  color: #8a5a2b;
+  font-size: 0.58rem;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ae-chk-label {
+  margin: 0 0 0.55rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9a9da3;
+}
+
+.ae-chk-addresses {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.ae-chk-address {
+  position: relative;
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.85rem 0.9rem;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  background: #f3f2ef;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.ae-chk-address input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ae-chk-address-top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.ae-chk-address-icon {
+  color: #a67c52;
+}
+
+.ae-chk-address:not(.is-selected) .ae-chk-address-icon {
+  color: #9a9da3;
+}
+
+.ae-chk-address-top strong {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #121417;
+}
+
+.ae-chk-radio {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #c8c5be;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ae-chk-radio::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.ae-chk-address.is-selected {
+  border-color: #121417;
+  background: #fff;
+}
+
+.ae-chk-address.is-selected .ae-chk-radio,
+.ae-chk-ship-opt.is-selected .ae-chk-radio {
+  border-color: #121417;
+}
+
+.ae-chk-address.is-selected .ae-chk-radio::after,
+.ae-chk-ship-opt.is-selected .ae-chk-radio::after {
+  background: #121417;
+}
+
+.ae-chk-address-body {
+  display: grid;
+  gap: 0.12rem;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  color: #6b6e73;
+}
+
+.ae-chk-address-name {
+  font-weight: 700;
+  color: #3a3d43;
+}
+
+.ae-chk-address-phone {
+  margin-top: 0.25rem;
+  color: #8a8d93;
+}
+
+.ae-chk-link {
+  margin-top: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #121417;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.ae-chk-ship {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.ae-chk-ship-opt {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: start;
+  padding: 0.9rem 0.95rem;
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  background: #f3f2ef;
+  cursor: pointer;
+}
+
+.ae-chk-ship-opt input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ae-chk-ship-opt.is-selected {
+  border-color: #121417;
+  background: #fff;
+}
+
+.ae-chk-ship-opt .ae-chk-radio {
+  margin-top: 0.15rem;
+}
+
+.ae-chk-ship-body {
+  display: grid;
+  gap: 0.28rem;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: #6b6e73;
+  min-width: 0;
+}
+
+.ae-chk-ship-body strong {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #121417;
+}
+
+.ae-chk-ship-badge {
+  padding: 0.15rem 0.4rem;
+  border-radius: 8px;
+  font-size: 0.55rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.ae-chk-ship-badge.is-accent {
+  background: #efe4d4;
+  color: #8a5a2b;
+}
+
+.ae-chk-ship-badge.is-muted {
+  background: #e8e6e1;
+  color: #6b6e73;
+}
+
+.ae-chk-ship-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #5c5f66;
+}
+
+.ae-chk-ship-opt.is-selected .ae-chk-ship-note {
+  color: #8a5a2b;
+}
+
+.ae-chk-ship-price {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #121417;
+  white-space: nowrap;
+  padding-top: 0.1rem;
+}
+
+.ae-chk-pay-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin-bottom: 0.95rem;
+}
+
+.ae-chk-pay-tab {
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  border: 1px solid #e4e2dd;
+  border-radius: 8px;
+  background: #f3f2ef;
+  color: #5c5f66;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ae-chk-pay-tab.is-active {
+  background: #fff;
+  border-color: #121417;
+  color: #121417;
+  box-shadow: inset 0 -2px 0 #121417;
+}
+
+.ae-chk-pay-form {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.ae-chk-field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8a8d93;
+}
+
+.ae-chk-brands {
+  font-size: 0.58rem;
+  letter-spacing: 0.06em;
+  color: #9a9da3;
+  text-transform: uppercase;
+}
+
+.ae-chk-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.ae-chk-pay-form label,
+.ae-chk-pay-row label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #8a8d93;
+}
+
+.ae-chk-pay-form input {
+  width: 100%;
+  height: 42px;
+  padding: 0 0.75rem;
+  border: 1px solid #ddd9d1;
+  border-radius: 8px;
+  background: #faf9f7;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #121417;
+}
+
+.ae-chk-card-field {
+  position: relative;
+}
+
+.ae-chk-card-field input {
+  padding-right: 2.4rem;
+}
+
+.ae-chk-field-lock {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #a67c52;
+  pointer-events: none;
+}
+
+.ae-chk-cvv-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.ae-chk-pay-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.ae-chk-check {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: #3a3d43 !important;
+}
+
+.ae-chk-check input {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: #121417;
+}
+
+.ae-chk-pay-alt {
+  padding: 1rem;
+  border-radius: 8px;
+  background: #f3f2ef;
+  font-size: 0.84rem;
+  color: #5c5f66;
+}
+
+.ae-chk-trust {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0.75rem 0.85rem;
+  border-radius: 8px;
+  background: #f3f2ef;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.15rem;
+}
+
+.ae-chk-trust li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #6b6e73;
+}
+
+.ae-chk-aside {
+  position: sticky;
+  top: 5.25rem;
+}
+
+.ae-chk-summary {
+  padding: 1.15rem 1.1rem 1.2rem;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #ebeae6;
+  animation: ae-chk-fade 0.5s ease both;
+}
+
+.ae-chk-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.ae-chk-summary-head h2 {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #121417;
+}
+
+.ae-chk-edit {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #a67c52;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.ae-chk-items {
+  list-style: none;
+  margin: 0 0 0.95rem;
+  padding: 0;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.ae-chk-items li {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 0.6rem;
+  align-items: start;
+}
+
+.ae-chk-items img {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: #ebe9e4;
+}
+
+.ae-chk-item-info {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.ae-chk-item-info strong {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #121417;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ae-chk-item-info > span {
+  font-size: 0.68rem;
+  line-height: 1.3;
+  color: #8a8d93;
+}
+
+.ae-chk-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
+}
+
+.ae-chk-qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  height: 28px;
+  padding: 0 0.2rem;
+  border: 1px solid #e4e2dd;
+  border-radius: 8px;
+  background: #faf9f7;
+}
+
+.ae-chk-qty button {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background: transparent;
+  color: #121417;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ae-chk-qty em {
+  font-style: normal;
+  min-width: 1.1rem;
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.ae-chk-remove {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #9a9da3;
+  cursor: pointer;
+}
+
+.ae-chk-item-price {
+  font-style: normal;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #121417;
+  white-space: nowrap;
+}
+
+.ae-chk-promo-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+}
+
+.ae-chk-promo-field {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 40px;
+  padding: 0 0.65rem;
+  border: 1px solid #ddd9d1;
+  border-radius: 8px;
+  background: #faf9f7;
+  color: #a67c52;
+}
+
+.ae-chk-promo-field input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #121417;
+  outline: none;
+}
+
+.ae-chk-promo-btn {
+  height: 40px;
+  padding: 0 0.85rem;
+  border: 0;
+  border-radius: 8px;
+  background: #121417;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ae-chk-promo-ok {
+  margin: 0 0 0.85rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  color: #8a5a2b;
+}
+
+.ae-chk-promo-ok svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.ae-chk-totals {
+  margin: 0;
+  padding: 0.75rem 0.8rem;
+  border-radius: 8px;
+  background: #f3f2ef;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.ae-chk-totals > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  color: #6b6e73;
+}
+
+.ae-chk-totals dt,
+.ae-chk-totals dd {
+  margin: 0;
+}
+
+.ae-chk-totals dd {
+  font-weight: 700;
+  color: #121417;
+  white-space: nowrap;
+}
+
+.ae-chk-total {
+  margin-top: 0.2rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid #e0ddd6;
+  color: #121417 !important;
+}
+
+.ae-chk-total dt,
+.ae-chk-total dd {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.ae-chk-currency {
+  margin: 0.45rem 0 0.85rem;
+  font-size: 0.66rem;
+  color: #9a9da3;
+}
+
+.ae-chk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 48px;
+  padding: 0 1rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ae-chk-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.ae-chk-btn-dark {
+  background: #121417;
+  color: #fff;
+}
+
+.ae-chk-btn-ghost {
+  background: transparent;
+  border-color: #c8c5be;
+  color: #121417;
+}
+
+.ae-chk-pay-cta {
+  width: 100%;
+}
+
+.ae-chk-success {
+  max-width: 520px;
+  margin: 2rem auto 0;
+  padding: 2rem 1.5rem;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid #ebeae6;
+  text-align: center;
+}
+
+.ae-chk-success svg {
+  margin-bottom: 0.65rem;
+}
+
+.ae-chk-success h2 {
+  margin: 0 0 0.45rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: 600;
+}
+
+.ae-chk-success p {
+  margin: 0 0 1.25rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #6b6e73;
+}
+
+.ae-chk-success-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  justify-content: center;
+}
+
+@keyframes ae-chk-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .ae-chk-layout,
+  .ae-chk-addresses {
+    grid-template-columns: 1fr;
+  }
+
+  .ae-chk-aside {
+    position: static;
+  }
+
+  .ae-chk-card-head {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .ae-chk-badge {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .ae-chk-pay-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .ae-chk-head {
+    flex-direction: column;
+  }
+}

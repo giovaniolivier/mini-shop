@@ -1,263 +1,587 @@
-﻿import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as cartApi from '../../services/cartApi';
+﻿import { useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  MdAdd,
+  MdAddCircleOutline,
+  MdBusiness,
+  MdCheck,
+  MdCreditCard,
+  MdBolt,
+  MdEco,
+  MdHelpOutline,
+  MdHome,
+  MdLocalOffer,
+  MdLock,
+  MdRemove,
+  MdShield,
+  MdShoppingBag,
+  MdStorefront,
+  MdSwapHoriz,
+  MdDeleteOutline,
+  MdVerifiedUser,
+} from 'react-icons/md';
+import { FaApple } from 'react-icons/fa';
+import {
+  CHECKOUT_ADDRESSES,
+  CHECKOUT_DEMO_ITEMS,
+  CHECKOUT_SHIPPING,
+} from '../../data/checkoutDemo';
 import { createOrder } from '../../services/ordersApi';
+import * as cartApi from '../../services/cartApi';
+import '../../styles/checkout.css';
 
-const DELIVERY_OPTIONS = [
-  { label: 'Standard (5 €)', value: 'standard', price: 5 },
-  { label: 'Express (10 €)', value: 'express', price: 10 },
-  { label: 'Retrait atelier (gratuit)', value: 'pickup', price: 0 },
-];
-const PAYMENT_OPTIONS = [
-  { label: 'Carte bancaire', value: 'card' },
-  { label: 'PayPal', value: 'paypal' },
-  { label: 'Paiement à la livraison', value: 'cod' },
-];
-
-function applyCart(res) {
-  return { items: res.data.items || [], total: res.data.total || 0 };
+function formatEuro(v) {
+  return `${Number(v || 0).toLocaleString('fr-FR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })} €`;
 }
 
-export default function Checkout() {
+function itemName(item) {
+  return item.Product?.name || item.name || 'Pièce';
+}
+
+function itemImage(item) {
+  return item.Product?.image_url || item.image_url || '';
+}
+
+function itemId(item) {
+  return item.ProductId || item.productId || item.id;
+}
+
+function itemDetail(item) {
+  return (
+    item.detail ||
+    item.Product?.material ||
+    item.Product?.description ||
+    'Pièce d’atelier Épure'
+  );
+}
+
+const STEPS = [
+  { id: 'panier', label: 'Panier' },
+  { id: 'livraison', label: 'Livraison' },
+  { id: 'paiement', label: 'Paiement' },
+  { id: 'confirmation', label: 'Confirmation' },
+];
+
+const ADDR_ICONS = { home: MdHome, business: MdBusiness };
+const SHIP_ICONS = { eco: MdEco, bolt: MdBolt, store: MdStorefront };
+
+export default function Checkout({
+  cart = [],
+  setCart,
+  updateCartItem,
+  removeFromCart,
+}) {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
-  const [delivery, setDelivery] = useState('standard');
-  const [payment, setPayment] = useState('card');
-  const [cartState, setCartState] = useState({ items: [], total: 0 });
+  const [addressId, setAddressId] = useState(
+    CHECKOUT_ADDRESSES.find((a) => a.default)?.id || CHECKOUT_ADDRESSES[0].id
+  );
+  const [shippingId, setShippingId] = useState('standard');
+  const [payTab, setPayTab] = useState('card');
+  const [promoInput, setPromoInput] = useState('EPUREVIP');
+  const [promoApplied, setPromoApplied] = useState(true);
+  const [localItems, setLocalItems] = useState(CHECKOUT_DEMO_ITEMS);
+  const [saveCard, setSaveCard] = useState(true);
+  const [sameBilling, setSameBilling] = useState(true);
+  const [card, setCard] = useState({
+    number: '4532 **** **** 8819',
+    name: 'ALEXANDRE DE SAINT-GERMAIN',
+    exp: '09/27',
+    cvv: '•••',
+  });
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState(false);
+  const [toast, setToast] = useState('');
 
-  useEffect(() => {
-    cartApi
-      .getCart()
-      .then((res) => setCartState(applyCart(res)))
-      .catch((err) => alert('Erreur chargement panier : ' + (err.response?.data?.message || err.message)));
-  }, []);
+  const liveCart = useMemo(
+    () => (cart || []).filter((i) => i.Product || i.name),
+    [cart]
+  );
+  const usingDemo = liveCart.length === 0;
+  const items = usingDemo ? localItems : liveCart;
 
-  const reloadCartOnMissing = () => {
-    alert("Ce produit n'est plus dans votre panier. Le panier va être rechargé.");
-    cartApi.getCart().then((res) => setCartState(applyCart(res)));
+  const shipping = CHECKOUT_SHIPPING.find((s) => s.id === shippingId) || CHECKOUT_SHIPPING[0];
+  const subtotalTtc = items.reduce(
+    (sum, i) => sum + Number(i.price || 0) * (i.quantity || 0),
+    0
+  );
+  const effectiveShipping = shipping.price || 0;
+  const ht = Math.round((subtotalTtc / 1.2) * 100) / 100;
+  const tva = Math.round((subtotalTtc - ht) * 100) / 100;
+  const totalTtc = Math.round((subtotalTtc + effectiveShipping) * 100) / 100;
+
+  const flash = (msg) => {
+    setToast(msg);
+    setTimeout(() => setToast(''), 2600);
   };
 
-  const addQty = (id) => {
-    cartApi
-      .updateCartItem(id, (cartState.items.find((i) => i.ProductId === id)?.quantity || 0) + 1)
-      .then((res) => setCartState(applyCart(res)))
-      .catch((err) => {
-        if (err.response?.data?.message === 'Produit non présent dans le panier') reloadCartOnMissing();
-        else alert(err.response?.data?.message || err.message);
-      });
-  };
-
-  const subQty = (id) => {
-    const current = cartState.items.find((i) => i.ProductId === id)?.quantity || 1;
-    cartApi
-      .updateCartItem(id, Math.max(1, current - 1))
-      .then((res) => setCartState(applyCart(res)))
-      .catch((err) => {
-        if (err.response?.data?.message === 'Produit non présent dans le panier') reloadCartOnMissing();
-        else alert(err.response?.data?.message || err.message);
-      });
+  const setQty = (id, qty) => {
+    const next = Math.max(1, qty);
+    if (usingDemo) {
+      setLocalItems((prev) =>
+        prev.map((i) => (itemId(i) === id ? { ...i, quantity: next } : i))
+      );
+      return;
+    }
+    if (typeof updateCartItem === 'function') updateCartItem(id, next);
   };
 
   const removeItem = (id) => {
-    cartApi
-      .removeFromCart(id)
-      .then((res) => setCartState(applyCart(res)))
-      .catch((err) => {
-        if (err.response?.data?.message === 'Produit non présent dans le panier') reloadCartOnMissing();
-        else alert(err.response?.data?.message || err.message);
-      });
-  };
-
-  const handleConfirm = async () => {
-    try {
-      await createOrder(
-        cartState.items.map((item) => ({
-          productId: item.ProductId || item.productId || item.Product?.id,
-          quantity: item.quantity,
-        }))
-      );
-      await cartApi.clearCart();
-      setCartState({ items: [], total: 0 });
-      alert('Merci pour votre commande Atelier Épure. Confirmation envoyée sous peu.');
-      navigate('/dashboard');
-    } catch (err) {
-      alert(err.response?.data?.message || err.message);
-    }
-  };
-
-  const handleNextStep = (nextStep) => {
-    if (cartState.items.length === 0) {
-      alert('Votre panier est vide.');
+    if (usingDemo) {
+      setLocalItems((prev) => prev.filter((i) => itemId(i) !== id));
       return;
     }
-    setStep(nextStep);
+    if (typeof removeFromCart === 'function') removeFromCart(id);
   };
 
-  const filteredItems = (cartState.items || []).filter((item) => item.Product);
-  const subtotal = filteredItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryPrice = DELIVERY_OPTIONS.find((opt) => opt.value === delivery)?.price || 0;
-  const taxes = Math.round(subtotal * 0.2 * 100) / 100;
-  const total = subtotal + deliveryPrice + taxes;
+  const applyPromo = () => {
+    if (promoInput.trim().toUpperCase() === 'EPUREVIP') {
+      setPromoApplied(true);
+      flash('Code EPUREVIP appliqué.');
+    } else {
+      setPromoApplied(false);
+      flash('Code promo non reconnu.');
+    }
+  };
 
-  const steps = ['Panier', 'Livraison', 'Paiement', 'Récap'];
+  const handlePay = async () => {
+    if (!items.length) {
+      flash('Votre panier est vide.');
+      return;
+    }
+    setBusy(true);
+    try {
+      const apiItems = items.filter((i) => !i._demo && !String(itemId(i)).startsWith('shop-'));
+      if (apiItems.length) {
+        await createOrder(
+          apiItems.map((item) => ({
+            productId: itemId(item),
+            quantity: item.quantity,
+          }))
+        );
+        await cartApi.clearCart().catch(() => {});
+      }
+      if (typeof setCart === 'function') setCart({ items: [], total: 0 });
+      setLocalItems([]);
+      setDone(true);
+      flash('Paiement confirmé — merci pour votre commande.');
+    } catch (err) {
+      flash(err.response?.data?.message || err.message || 'Paiement impossible.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const currentStep = done ? 3 : 2;
 
   return (
-    <div className="ae-page" style={{ maxWidth: 720, margin: '0 auto' }}>
-      <h1 className="ae-page-title">Finaliser la commande</h1>
-      <p className="ae-page-sub">Étape {step} sur 4 — Atelier Épure</p>
+    <div className="ae-chk">
+      {toast ? <div className="ae-chk-toast">{toast}</div> : null}
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: '1.75rem' }}>
-        {steps.map((label, i) => {
-          const n = i + 1;
-          const active = step === n;
-          return (
-            <div
-              key={label}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                opacity: active ? 1 : 0.45,
-                fontWeight: active ? 700 : 500,
-              }}
-            >
-              <span
-                style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 8,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: active ? 'var(--color-primary)' : '#ebe9e4',
-                  color: active ? '#fff' : 'var(--color-primary)',
-                  fontSize: 13,
-                }}
-              >
-                {n}
-              </span>
-              {label}
-            </div>
-          );
-        })}
-      </div>
+      <div className="ae-chk-inner">
+        <header className="ae-chk-head">
+          <div>
+            <p className="ae-chk-kicker">Finalisation de commande</p>
+            <h1>Paiement &amp; Expédition Sécurisés</h1>
+          </div>
 
-      <section className="surface" style={{ padding: '1.5rem' }}>
-        {step === 1 && (
-          <>
-            {filteredItems.length === 0 ? (
-              <p style={{ color: 'var(--color-muted)' }}>Votre panier est vide.</p>
-            ) : (
-              filteredItems.map((item) => (
-                <div
-                  key={item.id}
-                  style={{
-                    display: 'flex',
-                    gap: 14,
-                    alignItems: 'center',
-                    padding: '12px 0',
-                    borderBottom: '1px solid var(--color-border)',
-                  }}
+          <ol className="ae-chk-steps">
+            {STEPS.map((s, i) => {
+              const doneStep = i < currentStep;
+              const active = i === currentStep;
+              return (
+                <li
+                  key={s.id}
+                  className={`ae-chk-step${doneStep ? ' is-done' : ''}${
+                    active ? ' is-active' : ''
+                  }`}
                 >
-                  <img
-                    src={item.Product?.image_url}
-                    alt={item.Product?.name}
-                    style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8, background: '#ebe9e4' }}
-                  />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600 }}>{item.Product?.name}</div>
-                    <div style={{ color: 'var(--color-muted)', fontSize: 14 }}>
-                      {item.price} € × {item.quantity}
-                    </div>
+                  <span className="ae-chk-step-index" aria-hidden>
+                    {doneStep ? <MdCheck size={14} /> : null}
+                  </span>
+                  {s.label}
+                </li>
+              );
+            })}
+          </ol>
+        </header>
+
+        {done ? (
+          <section className="ae-chk-success">
+            <MdCheck size={36} aria-hidden />
+            <h2>Commande confirmée</h2>
+            <p>
+              Un e-mail de confirmation vous sera adressé sous peu. Notre atelier
+              prépare l’emballage et le certificat d’authenticité.
+            </p>
+            <div className="ae-chk-success-actions">
+              <Link to="/home" className="ae-chk-btn ae-chk-btn-dark">
+                Retour au catalogue
+              </Link>
+              <button
+                type="button"
+                className="ae-chk-btn ae-chk-btn-ghost"
+                onClick={() => navigate('/dashboard')}
+              >
+                Voir mon espace
+              </button>
+            </div>
+          </section>
+        ) : (
+          <div className="ae-chk-layout">
+            <div className="ae-chk-main">
+              <section className="ae-chk-card">
+                <div className="ae-chk-card-head">
+                  <span className="ae-chk-num">1</span>
+                  <div>
+                    <h2>Coordonnées &amp; Adresse de livraison</h2>
+                    <p>Renseignez votre destination pour le calcul des délais d’expédition.</p>
                   </div>
-                  <div style={{ display: 'flex', gap: 6 }}>
-                    <button type="button" className="btn btn-secondary" style={{ padding: '4px 10px' }} onClick={() => addQty(item.ProductId)}>
-                      +
-                    </button>
-                    <button type="button" className="btn btn-secondary" style={{ padding: '4px 10px' }} onClick={() => subQty(item.ProductId)}>
-                      −
-                    </button>
-                    <button type="button" className="btn btn-danger" style={{ padding: '4px 10px' }} onClick={() => removeItem(item.ProductId)}>
-                      Suppr.
-                    </button>
+                  <em className="ae-chk-badge">Étape active</em>
+                </div>
+
+                <p className="ae-chk-label">Adresses sauvegardées</p>
+                <div className="ae-chk-addresses">
+                  {CHECKOUT_ADDRESSES.map((a) => {
+                    const Icon = ADDR_ICONS[a.icon] || MdHome;
+                    return (
+                      <label
+                        key={a.id}
+                        className={`ae-chk-address${addressId === a.id ? ' is-selected' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="address"
+                          checked={addressId === a.id}
+                          onChange={() => setAddressId(a.id)}
+                        />
+                        <span className="ae-chk-address-top">
+                          <Icon size={18} className="ae-chk-address-icon" aria-hidden />
+                          <strong>{a.label}</strong>
+                          <span className="ae-chk-radio" aria-hidden />
+                        </span>
+                        <span className="ae-chk-address-body">
+                          <span className="ae-chk-address-name">{a.name}</span>
+                          {a.lines.map((line) => (
+                            <span key={line}>{line}</span>
+                          ))}
+                          <span className="ae-chk-address-phone">{a.phone}</span>
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+
+                <button
+                  type="button"
+                  className="ae-chk-link"
+                  onClick={() => flash('Formulaire nouvelle adresse bientôt disponible.')}
+                >
+                  <MdAddCircleOutline size={18} aria-hidden />
+                  Utiliser une nouvelle adresse de livraison
+                </button>
+              </section>
+
+              <section className="ae-chk-card">
+                <div className="ae-chk-card-head">
+                  <span className="ae-chk-num ae-chk-num-soft">2</span>
+                  <div>
+                    <h2>Mode d’expédition d’art &amp; mobilier</h2>
+                    <p>
+                      Tous nos colis sont scellés et protégés par un calage minéral recyclé.
+                    </p>
                   </div>
                 </div>
-              ))
-            )}
-            <div style={{ marginTop: 20, textAlign: 'right' }}>
-              <button type="button" className="btn btn-primary" disabled={cartState.items.length === 0} onClick={() => handleNextStep(2)}>
-                Suivant
-              </button>
-            </div>
-          </>
-        )}
 
-        {step === 2 && (
-          <>
-            {DELIVERY_OPTIONS.map((opt) => (
-              <label key={opt.value} style={{ display: 'flex', gap: 10, alignItems: 'center', margin: '12px 0', fontSize: 16 }}>
-                <input type="radio" name="delivery" value={opt.value} checked={delivery === opt.value} onChange={(e) => setDelivery(e.target.value)} />
-                {opt.label}
-              </label>
-            ))}
-            <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-              <button type="button" className="btn btn-secondary" onClick={() => setStep(1)}>
-                Précédent
-              </button>
-              <button type="button" className="btn btn-primary" onClick={() => setStep(3)}>
-                Suivant
-              </button>
-            </div>
-          </>
-        )}
+                <div className="ae-chk-ship">
+                  {CHECKOUT_SHIPPING.map((s) => {
+                    const NoteIcon = SHIP_ICONS[s.icon] || MdEco;
+                    return (
+                      <label
+                        key={s.id}
+                        className={`ae-chk-ship-opt${shippingId === s.id ? ' is-selected' : ''}`}
+                      >
+                        <input
+                          type="radio"
+                          name="shipping"
+                          checked={shippingId === s.id}
+                          onChange={() => setShippingId(s.id)}
+                        />
+                        <span className="ae-chk-radio" aria-hidden />
+                        <span className="ae-chk-ship-body">
+                          <strong>
+                            {s.title}
+                            {s.badge ? (
+                              <em className={`ae-chk-ship-badge is-${s.badgeTone || 'muted'}`}>
+                                {s.badge}
+                              </em>
+                            ) : null}
+                          </strong>
+                          <span>{s.text}</span>
+                          {s.note ? (
+                            <span className="ae-chk-ship-note">
+                              <NoteIcon size={14} aria-hidden />
+                              {s.note}
+                            </span>
+                          ) : null}
+                        </span>
+                        <strong className="ae-chk-ship-price">{s.priceLabel}</strong>
+                      </label>
+                    );
+                  })}
+                </div>
+              </section>
 
-        {step === 3 && (
-          <>
-            {PAYMENT_OPTIONS.map((opt) => (
-              <label key={opt.value} style={{ display: 'flex', gap: 10, alignItems: 'center', margin: '12px 0', fontSize: 16 }}>
-                <input type="radio" name="payment" value={opt.value} checked={payment === opt.value} onChange={(e) => setPayment(e.target.value)} />
-                {opt.label}
-              </label>
-            ))}
-            <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-              <button type="button" className="btn btn-secondary" onClick={() => setStep(2)}>
-                Précédent
-              </button>
-              <button type="button" className="btn btn-primary" onClick={() => setStep(4)}>
-                Suivant
-              </button>
-            </div>
-          </>
-        )}
+              <section className="ae-chk-card">
+                <div className="ae-chk-card-head">
+                  <span className="ae-chk-num">3</span>
+                  <div>
+                    <h2>Paiement sécurisé crypté</h2>
+                    <p>Protocole TLS 1.3 bancaire et authentification 3D-Secure.</p>
+                  </div>
+                  <em className="ae-chk-ssl">
+                    <MdShield size={14} aria-hidden />
+                    SSL 256 bits
+                  </em>
+                </div>
 
-        {step === 4 && (
-          <>
-            <ul style={{ paddingLeft: 18, marginBottom: 16 }}>
-              {filteredItems.map((item) => (
-                <li key={item.id} style={{ margin: '6px 0' }}>
-                  {item.Product?.name} × {item.quantity} — {(item.price * item.quantity).toFixed(2)} €
-                </li>
-              ))}
-            </ul>
-            <div style={{ fontSize: 15, lineHeight: 1.7 }}>
-              <div>Sous-total : <b>{subtotal.toFixed(2)} €</b></div>
-              <div>Livraison : <b>{deliveryPrice.toFixed(2)} €</b></div>
-              <div>Taxes (20 %) : <b>{taxes.toFixed(2)} €</b></div>
-              <div style={{ fontSize: 18, marginTop: 8, color: 'var(--color-secondary)' }}>
-                Total : <b>{total.toFixed(2)} €</b>
+                <div className="ae-chk-pay-tabs" role="tablist">
+                  {[
+                    { id: 'card', label: 'Carte bancaire', Icon: MdCreditCard },
+                    { id: 'apple', label: 'Apple Pay', Icon: FaApple },
+                    { id: 'wire', label: 'Virement Instant', Icon: MdSwapHoriz },
+                  ].map((t) => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={payTab === t.id}
+                      className={`ae-chk-pay-tab${payTab === t.id ? ' is-active' : ''}`}
+                      onClick={() => setPayTab(t.id)}
+                    >
+                      <t.Icon size={16} aria-hidden />
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+
+                {payTab === 'card' ? (
+                  <div className="ae-chk-pay-form">
+                    <div className="ae-chk-field-head">
+                      <span>Numéro de carte de paiement</span>
+                      <span className="ae-chk-brands" aria-hidden>
+                        Visa · Mastercard · Amex
+                      </span>
+                    </div>
+                    <label className="ae-chk-sr-only" htmlFor="chk-card-number">
+                      Numéro de carte
+                    </label>
+                    <div className="ae-chk-card-field">
+                      <input
+                        id="chk-card-number"
+                        value={card.number}
+                        onChange={(e) => setCard({ ...card, number: e.target.value })}
+                      />
+                      <MdLock size={16} className="ae-chk-field-lock" aria-hidden />
+                    </div>
+
+                    <label>
+                      Nom figurant sur la carte
+                      <input
+                        value={card.name}
+                        onChange={(e) => setCard({ ...card, name: e.target.value })}
+                      />
+                    </label>
+                    <div className="ae-chk-pay-row">
+                      <label>
+                        Expiration
+                        <input
+                          value={card.exp}
+                          onChange={(e) => setCard({ ...card, exp: e.target.value })}
+                        />
+                      </label>
+                      <label>
+                        <span className="ae-chk-cvv-label">
+                          CVV
+                          <MdHelpOutline size={14} aria-hidden title="Code de sécurité" />
+                        </span>
+                        <input
+                          value={card.cvv}
+                          onChange={(e) => setCard({ ...card, cvv: e.target.value })}
+                        />
+                      </label>
+                    </div>
+                    <label className="ae-chk-check">
+                      <input
+                        type="checkbox"
+                        checked={saveCard}
+                        onChange={(e) => setSaveCard(e.target.checked)}
+                      />
+                      Enregistrer cette carte en toute sécurité pour mes futures acquisitions
+                    </label>
+                    <label className="ae-chk-check">
+                      <input
+                        type="checkbox"
+                        checked={sameBilling}
+                        onChange={(e) => setSameBilling(e.target.checked)}
+                      />
+                      L’adresse de facturation est identique à l’adresse de livraison
+                    </label>
+                  </div>
+                ) : (
+                  <div className="ae-chk-pay-alt">
+                    <p>
+                      {payTab === 'apple'
+                        ? 'Confirmez le paiement via Apple Pay sur l’étape suivante.'
+                        : 'Un IBAN sécurisé vous sera communiqué après validation.'}
+                    </p>
+                  </div>
+                )}
+
+                <ul className="ae-chk-trust">
+                  <li>
+                    <MdLock size={16} aria-hidden />
+                    Cryptage 256 bits
+                  </li>
+                  <li>
+                    <MdShield size={16} aria-hidden />
+                    Garantie anti-fraude
+                  </li>
+                  <li>
+                    <MdVerifiedUser size={16} aria-hidden />
+                    3D Secure v2.2
+                  </li>
+                </ul>
+              </section>
+            </div>
+
+            <aside className="ae-chk-aside">
+              <div className="ae-chk-summary">
+                <div className="ae-chk-summary-head">
+                  <h2>
+                    <MdShoppingBag size={18} aria-hidden />
+                    Votre panier ({items.length} article{items.length > 1 ? 's' : ''})
+                  </h2>
+                  <button
+                    type="button"
+                    className="ae-chk-edit"
+                    onClick={() => navigate('/home')}
+                  >
+                    Modifier
+                  </button>
+                </div>
+
+                <ul className="ae-chk-items">
+                  {items.map((item) => {
+                    const id = itemId(item);
+                    return (
+                      <li key={id}>
+                        <img src={itemImage(item)} alt="" />
+                        <div className="ae-chk-item-info">
+                          <strong>{itemName(item)}</strong>
+                          <span>{itemDetail(item)}</span>
+                          <div className="ae-chk-item-actions">
+                            <div className="ae-chk-qty">
+                              <button
+                                type="button"
+                                aria-label="Diminuer"
+                                onClick={() => setQty(id, (item.quantity || 1) - 1)}
+                              >
+                                <MdRemove size={14} />
+                              </button>
+                              <em>{item.quantity}</em>
+                              <button
+                                type="button"
+                                aria-label="Augmenter"
+                                onClick={() => setQty(id, (item.quantity || 1) + 1)}
+                              >
+                                <MdAdd size={14} />
+                              </button>
+                            </div>
+                            <button
+                              type="button"
+                              className="ae-chk-remove"
+                              onClick={() => removeItem(id)}
+                            >
+                              <MdDeleteOutline size={14} aria-hidden />
+                              Supprimer
+                            </button>
+                          </div>
+                        </div>
+                        <em className="ae-chk-item-price">
+                          {formatEuro(Number(item.price) * item.quantity)}
+                        </em>
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                <div className="ae-chk-promo-row">
+                  <label className="ae-chk-promo-field">
+                    <MdLocalOffer size={16} aria-hidden />
+                    <input
+                      value={promoInput}
+                      onChange={(e) => setPromoInput(e.target.value)}
+                      aria-label="Code promo"
+                    />
+                  </label>
+                  <button type="button" className="ae-chk-promo-btn" onClick={applyPromo}>
+                    Appliquer
+                  </button>
+                </div>
+                {promoApplied ? (
+                  <p className="ae-chk-promo-ok">
+                    <MdCheck size={14} aria-hidden />
+                    Code EPUREVIP appliqué : frais de port offerts et traitement prioritaire
+                  </p>
+                ) : null}
+
+                <dl className="ae-chk-totals">
+                  <div>
+                    <dt>Sous-total articles (HT)</dt>
+                    <dd>{formatEuro(ht)}</dd>
+                  </div>
+                  <div>
+                    <dt>TVA légale (20%)</dt>
+                    <dd>{formatEuro(tva)}</dd>
+                  </div>
+                  <div>
+                    <dt>
+                      Livraison estimée (
+                      {shippingId === 'express' ? 'Express' : 'Éco-responsable'})
+                    </dt>
+                    <dd>
+                      {effectiveShipping === 0 ? 'Offerte' : formatEuro(effectiveShipping)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Remise Studio Privilège</dt>
+                    <dd>− 0,00 €</dd>
+                  </div>
+                  <div className="ae-chk-total">
+                    <dt>Total TTC</dt>
+                    <dd>{formatEuro(totalTtc)}</dd>
+                  </div>
+                </dl>
+                <p className="ae-chk-currency">Devise : EUR (€) · Taxes incluses</p>
+
+                <button
+                  type="button"
+                  className="ae-chk-btn ae-chk-btn-dark ae-chk-pay-cta"
+                  disabled={busy || !items.length}
+                  onClick={handlePay}
+                >
+                  <MdLock size={16} aria-hidden />
+                  {busy ? 'Traitement…' : `Confirmer et payer ${formatEuro(totalTtc)}`}
+                  <span aria-hidden>→</span>
+                </button>
               </div>
-            </div>
-            <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-              <button type="button" className="btn btn-secondary" onClick={() => setStep(3)}>
-                Précédent
-              </button>
-              <button type="button" className="btn btn-accent" onClick={handleConfirm}>
-                Valider la commande
-              </button>
-            </div>
-          </>
+            </aside>
+          </div>
         )}
-      </section>
+      </div>
     </div>
   );
 }
