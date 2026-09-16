@@ -92,7 +92,17 @@ function AppRoutes({
           path="/product/:id"
           element={<ProductDetail onAddToCart={addToCart} openCart={() => setCartOpen(true)} />}
         />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route
+          path="/checkout"
+          element={
+            <Checkout
+              cart={cart}
+              setCart={setCart}
+              updateCartItem={updateCartItem}
+              removeFromCart={removeFromCart}
+            />
+          }
+        />
         <Route path="/profile" element={<Profile />} />
         <Route
           path="/admin/products"
